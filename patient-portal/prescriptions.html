@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescriptions - St. George Hospital</title>
+    <link rel="stylesheet" href="css/patient-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Appointments</p>
+                <a href="appointments.html" class="nav-item">📅 My Appointments</a>
+                <a href="book-appointment.html" class="nav-item">➕ Book New</a>
+                <p class="nav-section">Health Records</p>
+                <a href="medical-records.html" class="nav-item">📋 Medical Records</a>
+                <a href="prescriptions.html" class="nav-item active">💊 Prescriptions</a>
+                <a href="lab-results.html" class="nav-item">🔬 Lab Results</a>
+                <p class="nav-section">Billing</p>
+                <a href="billing.html" class="nav-item">💳 Bills & Payments</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+                <a href="notifications.html" class="nav-item">🔔 Notifications</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search prescriptions...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">John Smith</div>
+                        <div class="user-role">Patient</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">My Prescriptions</h1>
+                        <p class="page-subtitle">View and manage your medications</p>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active">Current (3)</button>
+                    <button class="tab">Past</button>
+                    <button class="tab">Request Refill</button>
+                </div>
+
+                <div class="prescription-card">
+                    <div class="prescription-header">
+                        <div class="prescription-name">💊 Amoxicillin 500mg</div>
+                        <span class="badge badge-green">Active</span>
+                    </div>
+                    <div class="prescription-meta">
+                        <p><span>Prescribed by:</span> <strong>Dr. Sarah Johnson</strong></p>
+                        <p><span>Date:</span> <strong>15 January 2026</strong></p>
+                        <p><span>Dosage:</span> <strong>1 tablet, 3 times daily</strong></p>
+                        <p><span>Duration:</span> <strong>7 days</strong></p>
+                    </div>
+                    <div style="background: #f9fafb; padding: 10px; border-radius: 4px; margin: 12px 0;">
+                        <p class="text-sm"><strong>Instructions:</strong> Take after meals with water. Complete the full
+                            course.</p>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-sm text-gray">Remaining: </span>
+                            <strong style="color: #eab308;">4 days</strong>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="btn btn-outline btn-sm">View Details</button>
+                            <button class="btn btn-primary btn-sm">Request Refill</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prescription-card">
+                    <div class="prescription-header">
+                        <div class="prescription-name">💊 Paracetamol 650mg</div>
+                        <span class="badge badge-green">Active</span>
+                    </div>
+                    <div class="prescription-meta">
+                        <p><span>Prescribed by:</span> <strong>Dr. Sarah Johnson</strong></p>
+                        <p><span>Date:</span> <strong>15 January 2026</strong></p>
+                        <p><span>Dosage:</span> <strong>1 tablet as needed</strong></p>
+                        <p><span>Duration:</span> <strong>As required</strong></p>
+                    </div>
+                    <div style="background: #f9fafb; padding: 10px; border-radius: 4px; margin: 12px 0;">
+                        <p class="text-sm"><strong>Instructions:</strong> Take when fever exceeds 38°C. Max 4
+                            tablets/day.</p>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-sm text-gray">Quantity left: </span>
+                            <strong>6 tablets</strong>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="btn btn-outline btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prescription-card">
+                    <div class="prescription-header">
+                        <div class="prescription-name">💊 Metformin 500mg</div>
+                        <span class="badge badge-blue">Ongoing</span>
+                    </div>
+                    <div class="prescription-meta">
+                        <p><span>Prescribed by:</span> <strong>Dr. Michael Chen</strong></p>
+                        <p><span>Date:</span> <strong>02 December 2025</strong></p>
+                        <p><span>Dosage:</span> <strong>1 tablet, twice daily</strong></p>
+                        <p><span>Duration:</span> <strong>Long-term</strong></p>
+                    </div>
+                    <div style="background: #f9fafb; padding: 10px; border-radius: 4px; margin: 12px 0;">
+                        <p class="text-sm"><strong>Instructions:</strong> Take with meals. Do not skip doses.</p>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-sm text-gray">Next refill due: </span>
+                            <strong style="color: #eab308;">28 January 2026</strong>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="btn btn-outline btn-sm">View Details</button>
+                            <button class="btn btn-primary btn-sm">Request Refill</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-4">
+                    <span>⚠️</span>
+                    <div>
+                        <strong>Allergy Alert:</strong> Your records show allergy to Penicillin. All prescriptions have
+                        been reviewed for safety.
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

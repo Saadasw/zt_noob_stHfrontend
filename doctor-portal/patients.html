@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Patients - St. George Hospital</title>
+    <link rel="stylesheet" href="css/doctor-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Schedule</p>
+                <a href="appointments.html" class="nav-item">📅 Today's Appointments</a>
+                <a href="schedule.html" class="nav-item">🗓️ My Schedule</a>
+                <p class="nav-section">Patients</p>
+                <a href="patients.html" class="nav-item active">👥 My Patients</a>
+                <a href="consultation.html" class="nav-item">📝 Consultation</a>
+                <p class="nav-section">Orders</p>
+                <a href="prescriptions.html" class="nav-item">💊 Prescriptions</a>
+                <a href="lab-orders.html" class="nav-item">🔬 Lab Orders</a>
+                <a href="lab-results.html" class="nav-item">📊 Lab Results</a>
+                <p class="nav-section">Documents</p>
+                <a href="certificates.html" class="nav-item">📄 Certificates</a>
+                <a href="referrals.html" class="nav-item">🔄 Referrals</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="🔍 Search patients...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">Dr. Sarah Johnson</div>
+                        <div class="user-role">General Medicine</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">My Patients</h1>
+                        <p class="page-subtitle">View and manage your patient records</p>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="card">
+                    <div class="flex gap-4">
+                        <select class="form-select" style="width: auto;">
+                            <option>All Patients</option>
+                            <option>Recent Consultations</option>
+                            <option>With Lab Alerts</option>
+                        </select>
+                        <select class="form-select" style="width: auto;">
+                            <option>All Departments</option>
+                            <option>General Medicine</option>
+                            <option>Cardiology</option>
+                        </select>
+                        <select class="form-select" style="width: auto;">
+                            <option>Last 30 Days</option>
+                            <option>Last 90 Days</option>
+                            <option>All Time</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Patient List -->
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>ID</th>
+                                    <th>Last Visit</th>
+                                    <th>Diagnosis</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>John Smith</strong>
+                                        <div class="text-sm text-gray">Male, 45 yrs</div>
+                                    </td>
+                                    <td>PAT-2026-000123</td>
+                                    <td>27 Jan 2026</td>
+                                    <td>Hypertension</td>
+                                    <td><button class="btn btn-sm btn-outline">👁️ View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Mary Johnson</strong>
+                                        <div class="text-sm text-gray">Female, 58 yrs</div>
+                                    </td>
+                                    <td>PAT-2026-000456</td>
+                                    <td>24 Jan 2026</td>
+                                    <td>Dyslipidemia <span class="badge badge-red">🔴 Lab Alert</span></td>
+                                    <td><button class="btn btn-sm btn-outline">👁️ View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Emma Wilson</strong>
+                                        <div class="text-sm text-gray">Female, 34 yrs</div>
+                                    </td>
+                                    <td>PAT-2026-001012</td>
+                                    <td>27 Jan 2026</td>
+                                    <td>Migraine</td>
+                                    <td><button class="btn btn-sm btn-outline">👁️ View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>James Taylor</strong>
+                                        <div class="text-sm text-gray">Male, 52 yrs</div>
+                                    </td>
+                                    <td>PAT-2026-001345</td>
+                                    <td>22 Jan 2026</td>
+                                    <td>Type 2 Diabetes</td>
+                                    <td><button class="btn btn-sm btn-outline">👁️ View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Sarah Davis</strong>
+                                        <div class="text-sm text-gray">Female, 28 yrs</div>
+                                    </td>
+                                    <td>PAT-2026-001678</td>
+                                    <td>15 Jan 2026</td>
+                                    <td>Dermatitis</td>
+                                    <td><button class="btn btn-sm btn-outline">👁️ View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex justify-between items-center mt-4 text-sm text-gray">
+                        <span>Showing 1-5 of 234 patients</span>
+                        <div class="flex gap-2">
+                            <button class="btn btn-sm btn-outline">&lt; Prev</button>
+                            <button class="btn btn-sm btn-primary">1</button>
+                            <button class="btn btn-sm btn-outline">2</button>
+                            <button class="btn btn-sm btn-outline">3</button>
+                            <button class="btn btn-sm btn-outline">Next &gt;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Detail -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Patient Profile - John Smith</h3>
+                        <a href="consultation.html" class="btn btn-primary">📝 New Consultation</a>
+                    </div>
+
+                    <div class="profile-section">
+                        <div class="profile-grid">
+                            <div class="profile-item"><label>Patient ID</label>
+                                <p>PAT-2026-000123</p>
+                            </div>
+                            <div class="profile-item"><label>Age / Gender</label>
+                                <p>45 years (DOB: 10 Jun 1980) | Male</p>
+                            </div>
+                            <div class="profile-item"><label>Blood Group</label>
+                                <p>O+</p>
+                            </div>
+                            <div class="profile-item"><label>Phone</label>
+                                <p>+61 412 345 678</p>
+                            </div>
+                            <div class="profile-item"><label>Email</label>
+                                <p>john.smith@email.com</p>
+                            </div>
+                            <div class="profile-item"><label>Address</label>
+                                <p>45 Park Avenue, South Melbourne VIC 3205</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <span>⚠️</span>
+                        <div><strong>ALLERGIES:</strong> Sulfa drugs</div>
+                    </div>
+                    <div class="alert alert-info">
+                        <span>📋</span>
+                        <div><strong>CHRONIC:</strong> Hypertension, Type 2 Diabetes | <strong>MEDS:</strong> Metformin
+                            500mg BD, Lisinopril 10mg daily</div>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button class="tab active">Consultations</button>
+                        <button class="tab">Prescriptions</button>
+                        <button class="tab">Lab Results</button>
+                        <button class="tab">Vitals</button>
+                    </div>
+
+                    <!-- Consultation History -->
+                    <div class="patient-card">
+                        <div class="patient-header">
+                            <div>
+                                <div class="patient-name">📅 27 January 2026</div>
+                                <div class="patient-meta">Dr. Sarah Johnson | General Medicine</div>
+                            </div>
+                            <span class="badge badge-green">Completed</span>
+                        </div>
+                        <p><strong>Complaint:</strong> Blood pressure review, medication refill</p>
+                        <p><strong>Diagnosis:</strong> Essential Hypertension (I10) - Controlled</p>
+                        <p><strong>Treatment:</strong> Continue current medications</p>
+                        <p><strong>Follow-up:</strong> 3 months</p>
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-sm btn-outline">View Full Notes</button>
+                            <button class="btn btn-sm btn-outline">View Prescription</button>
+                        </div>
+                    </div>
+
+                    <div class="patient-card">
+                        <div class="patient-header">
+                            <div>
+                                <div class="patient-name">📅 15 October 2025</div>
+                                <div class="patient-meta">Dr. Sarah Johnson | General Medicine</div>
+                            </div>
+                            <span class="badge badge-green">Completed</span>
+                        </div>
+                        <p><strong>Complaint:</strong> Annual health check</p>
+                        <p><strong>Diagnosis:</strong> T2DM (E11.9), Hypertension (I10)</p>
+                        <p><strong>Treatment:</strong> Adjusted Metformin dose</p>
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-sm btn-outline">View Full Notes</button>
+                            <button class="btn btn-sm btn-outline">View Prescription</button>
+                            <button class="btn btn-sm btn-outline">View Lab Results</button>
+                        </div>
+                    </div>
+
+                    <a href="#" class="text-sm" style="color: #2563eb;">Load More History...</a>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

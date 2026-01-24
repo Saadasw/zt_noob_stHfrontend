@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation - St. George Hospital</title>
+    <link rel="stylesheet" href="css/doctor-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Schedule</p>
+                <a href="appointments.html" class="nav-item">📅 Today's Appointments</a>
+                <a href="schedule.html" class="nav-item">🗓️ My Schedule</a>
+                <p class="nav-section">Patients</p>
+                <a href="patients.html" class="nav-item">👥 My Patients</a>
+                <a href="consultation.html" class="nav-item active">📝 Consultation</a>
+                <p class="nav-section">Orders</p>
+                <a href="prescriptions.html" class="nav-item">💊 Prescriptions</a>
+                <a href="lab-orders.html" class="nav-item">🔬 Lab Orders</a>
+                <a href="lab-results.html" class="nav-item">📊 Lab Results</a>
+                <p class="nav-section">Documents</p>
+                <a href="certificates.html" class="nav-item">📄 Certificates</a>
+                <a href="referrals.html" class="nav-item">🔄 Referrals</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">Dr. Sarah Johnson</div>
+                        <div class="user-role">General Medicine</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Consultation</h1>
+                        <p class="page-subtitle">APT-2026-001012 | Emma Wilson</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline">Save Draft</button>
+                        <button class="btn btn-success">Complete Consultation</button>
+                    </div>
+                </div>
+
+                <!-- Patient Info -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Patient Information</h3>
+                        <a href="patients.html" class="btn btn-sm btn-outline">Full Profile</a>
+                    </div>
+                    <div class="grid-2">
+                        <div>
+                            <div class="profile-item"><label>Name</label>
+                                <p>Emma Wilson</p>
+                            </div>
+                            <div class="profile-item"><label>Age / Gender</label>
+                                <p>34 years (DOB: 15 May 1991) | Female</p>
+                            </div>
+                            <div class="profile-item"><label>Blood Group</label>
+                                <p>A+</p>
+                            </div>
+                            <div class="profile-item"><label>Medicare</label>
+                                <p>2345 67890 1</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="profile-item"><label>Patient ID</label>
+                                <p>PAT-2026-001012</p>
+                            </div>
+                            <div class="profile-item"><label>Phone</label>
+                                <p>+61 412 345 678</p>
+                            </div>
+                            <div class="profile-item"><label>Email</label>
+                                <p>emma.wilson@email.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger mt-4">
+                        <span>⚠️</span>
+                        <div><strong>ALLERGIES:</strong> Penicillin, Aspirin</div>
+                    </div>
+                    <div class="alert alert-info">
+                        <span>📋</span>
+                        <div><strong>CHRONIC CONDITIONS:</strong> Migraine (2023) | <strong>CURRENT MEDS:</strong>
+                            Sumatriptan 50mg (as needed)</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <!-- Vitals -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Vitals (Recorded by Nurse)</h3>
+                            <button class="btn btn-sm btn-outline">Edit Vitals</button>
+                        </div>
+                        <div class="vitals-grid">
+                            <div class="vital-item">
+                                <div class="vital-value">118/76</div>
+                                <div class="vital-label">Blood Pressure</div>
+                                <div class="vital-status" style="color: #22c55e;">🟢 Normal</div>
+                            </div>
+                            <div class="vital-item">
+                                <div class="vital-value">36.8°C</div>
+                                <div class="vital-label">Temperature</div>
+                                <div class="vital-status" style="color: #22c55e;">🟢 Normal</div>
+                            </div>
+                            <div class="vital-item">
+                                <div class="vital-value">72 bpm</div>
+                                <div class="vital-label">Pulse</div>
+                                <div class="vital-status" style="color: #22c55e;">🟢 Normal</div>
+                            </div>
+                            <div class="vital-item">
+                                <div class="vital-value">99%</div>
+                                <div class="vital-label">SpO2</div>
+                                <div class="vital-status" style="color: #22c55e;">🟢 Normal</div>
+                            </div>
+                        </div>
+                        <div class="grid-2 mt-4">
+                            <div class="vital-item">
+                                <div class="vital-value">62 kg</div>
+                                <div class="vital-label">Weight</div>
+                            </div>
+                            <div class="vital-item">
+                                <div class="vital-value">165 cm</div>
+                                <div class="vital-label">Height</div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-center mt-4">BMI: 22.8 <span style="color: #22c55e;">🟢 Normal</span></p>
+                    </div>
+
+                    <!-- Previous Visits -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Previous Visits</h3>
+                            <a href="patients.html" class="btn btn-sm btn-outline">View Full History</a>
+                        </div>
+                        <ul style="list-style: none;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                                <strong>15 Oct 2025</strong> - Migraine review
+                            </li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                                <strong>22 Jul 2025</strong> - Headache consultation
+                            </li>
+                            <li style="padding: 8px 0;">
+                                <strong>10 Mar 2025</strong> - Initial consultation
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Consultation Notes -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Consultation Notes</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Chief Complaint *</label>
+                        <textarea class="form-textarea"
+                            rows="3">Patient presents with persistent headaches for the past 2 weeks, accompanied by occasional dizziness and light sensitivity. Pain is described as throbbing, primarily on the right side.</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">History of Present Illness</label>
+                        <textarea class="form-textarea" rows="4">- Onset: 2 weeks ago
+- Frequency: Daily, worse in afternoons
+- Duration: 4-6 hours per episode
+- Severity: 7/10 on pain scale
+- Triggers: Stress, screen time, lack of sleep
+- Relief: Dark room, sleep, current medication partially effective</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Examination Findings</label>
+                        <textarea class="form-textarea" rows="3">General: Alert, oriented, appears uncomfortable
+HEENT: Pupils equal and reactive, no papilledema
+Neck: No stiffness, full range of motion
+Neuro: Cranial nerves intact, no focal deficits</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Diagnosis * (ICD-10)</label>
+                        <input type="text" class="form-input" placeholder="Search diagnosis..."
+                            style="margin-bottom: 8px;">
+                        <div
+                            style="padding: 8px; background: #dbeafe; border-radius: 4px; display: inline-flex; align-items: center; gap: 8px;">
+                            G43.909 - Migraine, unspecified, not intractable
+                            <button style="background: none; border: none; cursor: pointer;">✕</button>
+                        </div>
+                        <a href="#" style="display: block; margin-top: 8px; font-size: 13px; color: #2563eb;">+ Add
+                            Another Diagnosis</a>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Treatment Plan</label>
+                        <textarea class="form-textarea" rows="4">1. Continue Sumatriptan 50mg for acute attacks
+2. Start preventive therapy with Propranolol 40mg daily
+3. Lifestyle modifications: regular sleep, reduce screen time
+4. Maintain headache diary
+5. Follow up in 4 weeks</textarea>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Actions</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="prescriptions.html" class="quick-action-btn">💊 Write Prescription</a>
+                        <a href="lab-orders.html" class="quick-action-btn">🔬 Order Lab Test</a>
+                        <a href="certificates.html" class="quick-action-btn">📄 Issue Certificate</a>
+                        <a href="referrals.html" class="quick-action-btn">🔄 Create Referral</a>
+                        <button class="quick-action-btn">📅 Schedule Follow-up</button>
+                    </div>
+                </div>
+
+                <!-- Summary -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Consultation Summary</h3>
+                    </div>
+                    <ul style="list-style: none;">
+                        <li style="padding: 6px 0;">☑ Prescription Written: RX-2026-004890</li>
+                        <li style="padding: 6px 0;">☐ Lab Tests Ordered: None</li>
+                        <li style="padding: 6px 0;">☐ Medical Certificate: Not issued</li>
+                        <li style="padding: 6px 0;">☐ Referral: Not created</li>
+                        <li style="padding: 6px 0;">☑ Follow-up Scheduled: 24 February 2026</li>
+                    </ul>
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-outline">Save as Draft</button>
+                        <button class="btn btn-success">Complete Consultation</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

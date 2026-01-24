@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records - St. George Hospital</title>
+    <link rel="stylesheet" href="css/patient-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Appointments</p>
+                <a href="appointments.html" class="nav-item">📅 My Appointments</a>
+                <a href="book-appointment.html" class="nav-item">➕ Book New</a>
+                <p class="nav-section">Health Records</p>
+                <a href="medical-records.html" class="nav-item active">📋 Medical Records</a>
+                <a href="prescriptions.html" class="nav-item">💊 Prescriptions</a>
+                <a href="lab-results.html" class="nav-item">🔬 Lab Results</a>
+                <p class="nav-section">Billing</p>
+                <a href="billing.html" class="nav-item">💳 Bills & Payments</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+                <a href="notifications.html" class="nav-item">🔔 Notifications</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search records...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">John Smith</div>
+                        <div class="user-role">Patient</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Medical Records</h1>
+                        <p class="page-subtitle">View your consultation history and diagnoses</p>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active">Consultations</button>
+                    <button class="tab">Diagnoses</button>
+                    <button class="tab">Vitals History</button>
+                </div>
+
+                <div class="record-card">
+                    <div class="record-header">
+                        <div>
+                            <div class="record-date">📅 15 January 2026</div>
+                            <div class="record-doctor">Dr. Sarah Johnson</div>
+                            <div class="record-dept">General Medicine - Melbourne CBD</div>
+                        </div>
+                        <span class="badge badge-green">Completed</span>
+                    </div>
+                    <div class="record-content">
+                        <h5>Chief Complaint</h5>
+                        <p>Persistent cough for 5 days with mild fever and body ache</p>
+                        <h5>Diagnosis</h5>
+                        <p>Upper Respiratory Tract Infection (ICD-10: J06.9)</p>
+                        <h5>Treatment Plan</h5>
+                        <p>Prescribed antibiotics, rest and hydration recommended</p>
+                    </div>
+                    <div class="record-actions">
+                        <button class="btn btn-primary btn-sm">View Full Details</button>
+                        <button class="btn btn-outline btn-sm">Download PDF</button>
+                        <a href="prescriptions.html" class="btn btn-outline btn-sm">View Prescription</a>
+                    </div>
+                </div>
+
+                <div class="record-card">
+                    <div class="record-header">
+                        <div>
+                            <div class="record-date">📅 02 December 2025</div>
+                            <div class="record-doctor">Dr. Michael Chen</div>
+                            <div class="record-dept">Cardiology - Melbourne CBD</div>
+                        </div>
+                        <span class="badge badge-green">Completed</span>
+                    </div>
+                    <div class="record-content">
+                        <h5>Chief Complaint</h5>
+                        <p>Routine heart checkup, 6-month follow-up</p>
+                        <h5>Diagnosis</h5>
+                        <p>No abnormalities detected</p>
+                        <h5>Treatment Plan</h5>
+                        <p>Continue current medications, follow up in 6 months</p>
+                    </div>
+                    <div class="record-actions">
+                        <button class="btn btn-primary btn-sm">View Full Details</button>
+                        <button class="btn btn-outline btn-sm">Download PDF</button>
+                        <a href="lab-results.html" class="btn btn-outline btn-sm">View Lab Results</a>
+                    </div>
+                </div>
+
+                <!-- Vitals History -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Vitals</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>BP</th>
+                                    <th>Temp</th>
+                                    <th>Pulse</th>
+                                    <th>Weight</th>
+                                    <th>SpO2</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>15 Jan 2026</td>
+                                    <td>120/80</td>
+                                    <td>37.8°C</td>
+                                    <td>78 bpm</td>
+                                    <td>72 kg</td>
+                                    <td>98%</td>
+                                </tr>
+                                <tr>
+                                    <td>02 Dec 2025</td>
+                                    <td>118/78</td>
+                                    <td>36.5°C</td>
+                                    <td>72 bpm</td>
+                                    <td>71 kg</td>
+                                    <td>99%</td>
+                                </tr>
+                                <tr>
+                                    <td>15 Oct 2025</td>
+                                    <td>122/82</td>
+                                    <td>36.6°C</td>
+                                    <td>75 bpm</td>
+                                    <td>73 kg</td>
+                                    <td>98%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

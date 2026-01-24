@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - St. George Hospital</title>
+    <link rel="stylesheet" href="css/admin-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <div>
+                    <div class="sidebar-title">St. George Hospital</div>
+                    <div class="sidebar-subtitle">Admin Portal</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Management</p>
+                <a href="branches.html" class="nav-item">🏥 Branch Management</a>
+                <a href="users.html" class="nav-item">👥 User Management</a>
+                <a href="doctors.html" class="nav-item">👨‍⚕️ Doctor Management</a>
+                <a href="departments.html" class="nav-item">🏷️ Departments</a>
+                <a href="services.html" class="nav-item">💰 Service Charges</a>
+                <p class="nav-section">Analytics</p>
+                <a href="reports.html" class="nav-item active">📊 Reports</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="branch-selector">
+                    <select>
+                        <option>All Branches</option>
+                        <option>Melbourne CBD</option>
+                        <option>Sydney CBD</option>
+                        <option>Brisbane</option>
+                    </select>
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">John Administrator</div>
+                        <div class="user-role">System Admin</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Reports</h1>
+                        <p class="page-subtitle">View system-wide and branch-specific reports</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="flex gap-2 mb-4">
+                        <select class="form-select" style="width: auto;">
+                            <option>All Branches</option>
+                            <option>Melbourne CBD</option>
+                            <option>Sydney CBD</option>
+                            <option>Brisbane</option>
+                        </select>
+                        <select class="form-select" style="width: auto;">
+                            <option>This Month</option>
+                            <option>Today</option>
+                            <option>This Week</option>
+                            <option>Last Month</option>
+                            <option>Custom Range...</option>
+                        </select>
+                        <button class="btn btn-primary">📊 Generate</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Summary - January 2026 (All Branches)</h3>
+                    </div>
+                    <div class="grid-3">
+                        <div style="text-align: center; padding: 16px; background: #f9fafb; border-radius: 4px;">
+                            <div style="font-size: 28px; font-weight: bold;">156</div>
+                            <div class="text-sm text-gray">👥 New Patients</div>
+                            <div class="text-sm" style="color: #16a34a;">↑ 12% vs last month</div>
+                        </div>
+                        <div style="text-align: center; padding: 16px; background: #f9fafb; border-radius: 4px;">
+                            <div style="font-size: 28px; font-weight: bold;">892</div>
+                            <div class="text-sm text-gray">📅 Appointments</div>
+                            <div class="text-sm" style="color: #16a34a;">↑ 8% vs last month</div>
+                        </div>
+                        <div style="text-align: center; padding: 16px; background: #f9fafb; border-radius: 4px;">
+                            <div style="font-size: 28px; font-weight: bold;">$78,450</div>
+                            <div class="text-sm text-gray">💰 Total Revenue</div>
+                            <div class="text-sm" style="color: #16a34a;">↑ 15% vs last month</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Revenue by Branch</h3>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div class="flex justify-between mb-4">
+                            <span>Melbourne CBD</span>
+                            <span>$35,200 (45%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill blue" style="width: 45%;">45%</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div class="flex justify-between mb-4">
+                            <span>Sydney CBD</span>
+                            <span>$26,800 (34%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill green" style="width: 34%;">34%</div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div class="flex justify-between mb-4">
+                            <span>Brisbane</span>
+                            <span>$16,450 (21%)</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill yellow" style="width: 21%;">21%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Appointments by Status</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Branch</th>
+                                    <th>Completed</th>
+                                    <th>Cancelled</th>
+                                    <th>No-Show</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Melbourne CBD</td>
+                                    <td>380</td>
+                                    <td>22</td>
+                                    <td>8</td>
+                                    <td><strong>410</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Sydney CBD</td>
+                                    <td>285</td>
+                                    <td>18</td>
+                                    <td>5</td>
+                                    <td><strong>308</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>Brisbane</td>
+                                    <td>165</td>
+                                    <td>12</td>
+                                    <td>3</td>
+                                    <td><strong>180</strong></td>
+                                </tr>
+                                <tr style="background: #f9fafb;">
+                                    <td><strong>TOTAL</strong></td>
+                                    <td><strong>830</strong></td>
+                                    <td><strong>52</strong></td>
+                                    <td><strong>16</strong></td>
+                                    <td><strong>898</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Revenue by Service Category</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>% of Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Consultations</td>
+                                    <td>$52,800.00</td>
+                                    <td>67.3%</td>
+                                </tr>
+                                <tr>
+                                    <td>Laboratory Tests</td>
+                                    <td>$18,650.00</td>
+                                    <td>23.8%</td>
+                                </tr>
+                                <tr>
+                                    <td>Pharmacy & Other</td>
+                                    <td>$7,000.00</td>
+                                    <td>8.9%</td>
+                                </tr>
+                                <tr style="background: #f9fafb;">
+                                    <td><strong>TOTAL</strong></td>
+                                    <td><strong>$78,450.00</strong></td>
+                                    <td><strong>100%</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Top Performing Doctors</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Doctor</th>
+                                    <th>Branch</th>
+                                    <th>Patients</th>
+                                    <th>Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Dr. Sarah Johnson</td>
+                                    <td>Melbourne CBD</td>
+                                    <td>168</td>
+                                    <td>$14,280</td>
+                                </tr>
+                                <tr>
+                                    <td>Dr. Emily Brown</td>
+                                    <td>Sydney CBD</td>
+                                    <td>152</td>
+                                    <td>$12,920</td>
+                                </tr>
+                                <tr>
+                                    <td>Dr. Michael Chen</td>
+                                    <td>Melbourne CBD</td>
+                                    <td>140</td>
+                                    <td>$16,800</td>
+                                </tr>
+                                <tr>
+                                    <td>Dr. James Wilson</td>
+                                    <td>Brisbane</td>
+                                    <td>98</td>
+                                    <td>$8,330</td>
+                                </tr>
+                                <tr>
+                                    <td>Dr. Lisa Anderson</td>
+                                    <td>Sydney CBD</td>
+                                    <td>95</td>
+                                    <td>$8,075</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 mt-4">
+                    <button class="btn btn-outline">🖨️ Print Report</button>
+                    <button class="btn btn-outline">📥 Export to Excel</button>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

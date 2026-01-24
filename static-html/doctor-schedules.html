@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Schedules - St. George Hospital</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <p class="nav-section">Main Menu</p>
+                <a href="dashboard.html" class="nav-item">Dashboard</a>
+                <a href="patients.html" class="nav-item">Patients</a>
+                <a href="appointments.html" class="nav-item">Appointments</a>
+                <a href="doctor-directory.html" class="nav-item">Find Doctors</a>
+                <a href="book-appointment.html" class="nav-item">Book Slot</a>
+                <a href="patient-lab-tests.html" class="nav-item">Lab Tests</a>
+                <p class="nav-section">Operations</p>
+                <a href="doctor-schedules.html" class="nav-item active">Physician Sched</a>
+                <a href="inventory.html" class="nav-item">Branch Stock</a>
+                <a href="billing.html" class="nav-item">Billing</a>
+                <p class="nav-section">Resources</p>
+                <a href="medicine-catalog.html" class="nav-item">Medicine Catalog</a>
+                <a href="lab-tests.html" class="nav-item">Admin Lab Tests</a>
+                <a href="rooms.html" class="nav-item">Rooms</a>
+                <p class="nav-section">System Admin</p>
+                <a href="branches.html" class="nav-item">Branches</a>
+                <a href="user-management.html" class="nav-item">Users</a>
+                <a href="database-manager.html" class="nav-item">Mock Database</a>
+                <a href="settings.html" class="nav-item">Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search doctors...">
+                </div>
+                <div class="user-info">
+                    <div style="text-align: right;">
+                        <p class="user-name">Dr. Sarah Mitchell</p>
+                        <p class="user-role">ADMIN</p>
+                    </div>
+                    <img src="https://picsum.photos/seed/admin/36/36" alt="User" class="user-avatar">
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Physician Schedules</h1>
+                        <p class="page-subtitle">Manage doctor working hours and availability</p>
+                    </div>
+                    <button class="btn btn-primary">+ Add Schedule</button>
+                </div>
+
+                <!-- Week Navigation -->
+                <div class="card mb-4">
+                    <div class="flex justify-between items-center">
+                        <button class="btn btn-secondary">← Previous Week</button>
+                        <h3 style="font-weight: bold;">January 20 - 26, 2026</h3>
+                        <button class="btn btn-secondary">Next Week →</button>
+                    </div>
+                </div>
+
+                <!-- Schedule Table -->
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Doctor</th>
+                                    <th>Specialty</th>
+                                    <th>Mon</th>
+                                    <th>Tue</th>
+                                    <th>Wed</th>
+                                    <th>Thu</th>
+                                    <th>Fri</th>
+                                    <th>Sat</th>
+                                    <th>Sun</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <img src="https://picsum.photos/seed/doc1/28/28"
+                                                style="width: 28px; height: 28px; border-radius: 50%;">
+                                            <span>Dr. James Wilson</span>
+                                        </div>
+                                    </td>
+                                    <td>General Medicine</td>
+                                    <td><span class="badge badge-green">9AM-5PM</span></td>
+                                    <td><span class="badge badge-green">9AM-5PM</span></td>
+                                    <td><span class="badge badge-green">9AM-5PM</span></td>
+                                    <td><span class="badge badge-green">9AM-5PM</span></td>
+                                    <td><span class="badge badge-green">9AM-1PM</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <img src="https://picsum.photos/seed/doc2/28/28"
+                                                style="width: 28px; height: 28px; border-radius: 50%;">
+                                            <span>Dr. Emily Parker</span>
+                                        </div>
+                                    </td>
+                                    <td>Cardiology</td>
+                                    <td><span class="badge badge-green">10AM-6PM</span></td>
+                                    <td><span class="badge badge-green">10AM-6PM</span></td>
+                                    <td><span class="badge badge-yellow">Leave</span></td>
+                                    <td><span class="badge badge-green">10AM-6PM</span></td>
+                                    <td><span class="badge badge-green">10AM-6PM</span></td>
+                                    <td><span class="badge badge-green">10AM-2PM</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <img src="https://picsum.photos/seed/doc3/28/28"
+                                                style="width: 28px; height: 28px; border-radius: 50%;">
+                                            <span>Dr. Michael Chen</span>
+                                        </div>
+                                    </td>
+                                    <td>Orthopedics</td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                    <td><span class="badge badge-green">8AM-4PM</span></td>
+                                    <td><span class="badge badge-green">8AM-4PM</span></td>
+                                    <td><span class="badge badge-green">8AM-4PM</span></td>
+                                    <td><span class="badge badge-green">8AM-4PM</span></td>
+                                    <td><span class="badge badge-green">8AM-12PM</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <img src="https://picsum.photos/seed/doc4/28/28"
+                                                style="width: 28px; height: 28px; border-radius: 50%;">
+                                            <span>Dr. Sarah Johnson</span>
+                                        </div>
+                                    </td>
+                                    <td>Pediatrics</td>
+                                    <td><span class="badge badge-green">9AM-5PM</span></td>
+                                    <td><span class="badge badge-green">9AM-5PM</span></td>
+                                    <td><span class="badge badge-green">9AM-5PM</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                    <td><span class="badge badge-green">9AM-5PM</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="flex items-center gap-2">
+                                            <img src="https://picsum.photos/seed/doc5/28/28"
+                                                style="width: 28px; height: 28px; border-radius: 50%;">
+                                            <span>Dr. Robert Lee</span>
+                                        </div>
+                                    </td>
+                                    <td>Dermatology</td>
+                                    <td><span class="badge badge-green">11AM-7PM</span></td>
+                                    <td><span class="badge badge-green">11AM-7PM</span></td>
+                                    <td><span class="badge badge-green">11AM-7PM</span></td>
+                                    <td><span class="badge badge-green">11AM-7PM</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                    <td><span class="badge badge-gray">Off</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Override Requests -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Pending Schedule Override Requests</h3>
+                        <span class="badge badge-yellow">2 pending</span>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Doctor</th>
+                                    <th>Request Type</th>
+                                    <th>Date</th>
+                                    <th>Reason</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Dr. Emily Parker</td>
+                                    <td><span class="badge badge-yellow">Leave</span></td>
+                                    <td>Jan 22, 2026</td>
+                                    <td>Personal appointment</td>
+                                    <td>
+                                        <button class="btn btn-primary"
+                                            style="padding: 4px 8px; font-size: 12px;">Approve</button>
+                                        <button class="btn btn-danger"
+                                            style="padding: 4px 8px; font-size: 12px;">Reject</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Dr. Michael Chen</td>
+                                    <td><span class="badge badge-blue">Extra Hours</span></td>
+                                    <td>Jan 25, 2026</td>
+                                    <td>Cover for Dr. Lee</td>
+                                    <td>
+                                        <button class="btn btn-primary"
+                                            style="padding: 4px 8px; font-size: 12px;">Approve</button>
+                                        <button class="btn btn-danger"
+                                            style="padding: 4px 8px; font-size: 12px;">Reject</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

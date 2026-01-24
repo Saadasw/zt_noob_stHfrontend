@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - St. George Hospital</title>
+    <link rel="stylesheet" href="css/patient-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+
+                <p class="nav-section">Appointments</p>
+                <a href="appointments.html" class="nav-item">📅 My Appointments</a>
+                <a href="book-appointment.html" class="nav-item active">➕ Book New</a>
+
+                <p class="nav-section">Health Records</p>
+                <a href="medical-records.html" class="nav-item">📋 Medical Records</a>
+                <a href="prescriptions.html" class="nav-item">💊 Prescriptions</a>
+                <a href="lab-results.html" class="nav-item">🔬 Lab Results</a>
+
+                <p class="nav-section">Billing</p>
+                <a href="billing.html" class="nav-item">💳 Bills & Payments</a>
+
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+                <a href="notifications.html" class="nav-item">🔔 Notifications</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">John Smith</div>
+                        <div class="user-role">Patient</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <!-- Header -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Book New Appointment</h1>
+                        <p class="page-subtitle">Select your preferred doctor, date and time</p>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <!-- Booking Form -->
+                    <div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Appointment Details</h3>
+                            </div>
+                            <form>
+                                <div class="form-group">
+                                    <label class="form-label">Select Branch *</label>
+                                    <select class="form-select">
+                                        <option value="">Choose a branch...</option>
+                                        <option value="melb" selected>Melbourne CBD</option>
+                                        <option value="syd">Sydney CBD</option>
+                                        <option value="bris">Brisbane</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Department *</label>
+                                    <select class="form-select">
+                                        <option value="">Select department...</option>
+                                        <option value="gm" selected>General Medicine</option>
+                                        <option value="card">Cardiology</option>
+                                        <option value="orth">Orthopedics</option>
+                                        <option value="pedi">Pediatrics</option>
+                                        <option value="derm">Dermatology</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Select Doctor *</label>
+                                    <select class="form-select">
+                                        <option value="">Choose a doctor...</option>
+                                        <option value="doc1" selected>Dr. Sarah Johnson</option>
+                                        <option value="doc2">Dr. James Wilson</option>
+                                        <option value="doc3">Any Available Doctor</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Appointment Type *</label>
+                                    <select class="form-select">
+                                        <option value="consult">New Consultation</option>
+                                        <option value="followup" selected>Follow-up Visit</option>
+                                        <option value="checkup">Routine Checkup</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Preferred Date *</label>
+                                    <input type="date" class="form-input" value="2026-01-27">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Reason for Visit (Optional)</label>
+                                    <textarea class="form-textarea" rows="3"
+                                        placeholder="Briefly describe your symptoms...">Follow-up for respiratory infection treatment.</textarea>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Time Slots -->
+                    <div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Available Time Slots</h3>
+                                <span class="badge badge-blue">27 Jan 2026</span>
+                            </div>
+                            <p class="text-sm text-gray mb-4">Dr. Sarah Johnson - General Medicine</p>
+
+                            <div style="margin-bottom: 16px;">
+                                <p style="font-weight: 500; margin-bottom: 8px;">🌅 Morning</p>
+                                <div class="time-slots">
+                                    <button class="time-slot">09:00 AM</button>
+                                    <button class="time-slot">09:30 AM</button>
+                                    <button class="time-slot disabled">10:00 AM</button>
+                                    <button class="time-slot selected">10:30 AM</button>
+                                    <button class="time-slot">11:00 AM</button>
+                                    <button class="time-slot disabled">11:30 AM</button>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 16px;">
+                                <p style="font-weight: 500; margin-bottom: 8px;">🌤️ Afternoon</p>
+                                <div class="time-slots">
+                                    <button class="time-slot">02:00 PM</button>
+                                    <button class="time-slot disabled">02:30 PM</button>
+                                    <button class="time-slot">03:00 PM</button>
+                                    <button class="time-slot">03:30 PM</button>
+                                    <button class="time-slot">04:00 PM</button>
+                                    <button class="time-slot">04:30 PM</button>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info">
+                                <span>ℹ️</span>
+                                <div>Grayed slots are already booked. Each consultation is 30 minutes.</div>
+                            </div>
+                        </div>
+
+                        <!-- Booking Summary -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Booking Summary</h3>
+                            </div>
+                            <div style="background: #f9fafb; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                                <div class="profile-item">
+                                    <label>Doctor</label>
+                                    <p>Dr. Sarah Johnson</p>
+                                </div>
+                                <div class="profile-item">
+                                    <label>Department</label>
+                                    <p>General Medicine</p>
+                                </div>
+                                <div class="profile-item">
+                                    <label>Date & Time</label>
+                                    <p>Monday, 27 January 2026 at 10:30 AM</p>
+                                </div>
+                                <div class="profile-item">
+                                    <label>Branch</label>
+                                    <p>Melbourne CBD</p>
+                                </div>
+                                <div class="profile-item">
+                                    <label>Consultation Fee</label>
+                                    <p style="font-size: 18px; color: #2563eb; font-weight: 600;">$85.00</p>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" style="width: 100%;">Confirm Booking</button>
+                            <p class="text-sm text-gray text-center mt-4">
+                                By confirming, you agree to the cancellation policy
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirmation (shown after booking) -->
+                <div class="card mt-4" style="border: 2px solid #22c55e;">
+                    <div class="text-center" style="padding: 32px;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">✅</div>
+                        <h2 class="page-title">Appointment Confirmed!</h2>
+                        <p class="text-gray mb-4">Your appointment has been successfully booked</p>
+
+                        <div
+                            style="background: #f9fafb; padding: 16px; border-radius: 4px; max-width: 300px; margin: 0 auto 16px; text-align: left;">
+                            <p><strong>Appointment ID:</strong> APT-2026-001234</p>
+                            <p><strong>Date:</strong> Monday, 27 January 2026</p>
+                            <p><strong>Time:</strong> 10:30 AM</p>
+                            <p><strong>Doctor:</strong> Dr. Sarah Johnson</p>
+                            <p><strong>Branch:</strong> Melbourne CBD</p>
+                        </div>
+
+                        <p class="text-sm text-gray mb-4">
+                            A confirmation has been sent to your email and mobile.
+                        </p>
+
+                        <div class="flex gap-2" style="justify-content: center;">
+                            <button class="btn btn-primary">Download Appointment Slip</button>
+                            <a href="dashboard.html" class="btn btn-outline">Back to Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

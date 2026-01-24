@@ -1,8 +1,4 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export interface AnalysisResult {
   summary: string;
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH';
@@ -10,46 +6,27 @@ export interface AnalysisResult {
 }
 
 export const analyzeMedicalRecord = async (symptoms: string, history: string): Promise<AnalysisResult> => {
-  // Use gemini-3-pro-preview for complex reasoning tasks like medical analysis.
-  // Set thinkingBudget to 32768 for high-quality reasoning.
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
-    contents: {
-      parts: [
-        {
-          text: `Analyze the following patient data for a doctor's assistance. 
-    Symptoms: ${symptoms}
-    History: ${history}`
-        }
-      ]
-    },
-    config: {
-      systemInstruction: "You are a professional medical diagnostic assistant. Provide a structured summary, risk assessment, and actionable suggestions based on symptoms and history. Do not provide a definitive diagnosis, use cautious language.",
-      responseMimeType: "application/json",
-      thinkingConfig: { thinkingBudget: 32768 },
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          summary: { type: Type.STRING },
-          riskLevel: { type: Type.STRING, enum: ['LOW', 'MEDIUM', 'HIGH'] },
-          suggestions: {
-            type: Type.ARRAY,
-            items: { type: Type.STRING }
-          }
-        },
-        required: ["summary", "riskLevel", "suggestions"]
-      }
-    }
-  });
+  // Mock implementation - returns simulated analysis results
+  // Simulating network delay for realistic UX
+  await new Promise(resolve => setTimeout(resolve, 1500));
+  
+  // Return mock analysis result based on symptoms
+  const isHighRisk = symptoms.toLowerCase().includes('severe') || 
+                     symptoms.toLowerCase().includes('chest pain') ||
+                     symptoms.toLowerCase().includes('difficulty breathing');
+  
+  const isMediumRisk = symptoms.toLowerCase().includes('fever') || 
+                       symptoms.toLowerCase().includes('persistent') ||
+                       symptoms.toLowerCase().includes('pain');
 
-  try {
-    const jsonStr = response.text.trim();
-    return JSON.parse(jsonStr);
-  } catch (e) {
-    return {
-      summary: "Error analyzing data.",
-      riskLevel: "LOW",
-      suggestions: ["Consult a specialist immediately."]
-    };
-  }
+  return {
+    summary: `Based on the reported symptoms (${symptoms.substring(0, 50)}...) and medical history, the patient requires monitoring. This is a simulated analysis for demonstration purposes.`,
+    riskLevel: isHighRisk ? 'HIGH' : isMediumRisk ? 'MEDIUM' : 'LOW',
+    suggestions: [
+      "Schedule a follow-up appointment within 1-2 weeks",
+      "Monitor vital signs regularly",
+      "Maintain current medication regimen",
+      "Report any worsening symptoms immediately"
+    ]
+  };
 };

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - St. George Hospital</title>
+    <link rel="stylesheet" href="css/staff-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Patients</p>
+                <a href="patients.html" class="nav-item">👤 Register/Search</a>
+                <p class="nav-section">Appointments</p>
+                <a href="appointments.html" class="nav-item">📅 Schedule & Booking</a>
+                <p class="nav-section">Services</p>
+                <a href="laboratory.html" class="nav-item">🔬 Laboratory</a>
+                <a href="pharmacy.html" class="nav-item">💊 Pharmacy</a>
+                <a href="billing.html" class="nav-item">💳 Billing</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item active">👤 My Profile</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box"><input type="text" placeholder="Search..."></div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">Jane Smith</div>
+                        <div class="user-role">General Staff</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">My Profile</h1>
+                        <p class="page-subtitle">View and update your profile information</p>
+                    </div>
+                    <button class="btn btn-outline">Edit</button>
+                </div>
+
+                <div class="card">
+                    <div class="flex gap-4 items-center mb-4">
+                        <div
+                            style="width: 80px; height: 80px; background: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: bold;">
+                            JS</div>
+                        <div>
+                            <h2 style="font-size: 20px;">Jane Smith</h2>
+                            <p class="text-gray">Staff ID: STF-00012</p>
+                            <p class="text-gray">Role: General Staff</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Personal Information</h3>
+                    </div>
+                    <div class="profile-grid">
+                        <div class="profile-item"><label>Full Name</label>
+                            <p>Jane Smith</p>
+                        </div>
+                        <div class="profile-item"><label>Date of Birth</label>
+                            <p>15 August 1990</p>
+                        </div>
+                        <div class="profile-item"><label>Gender</label>
+                            <p>Female</p>
+                        </div>
+                        <div class="profile-item"><label>Email</label>
+                            <p>jane.smith@stgeorgehospital.com.au</p>
+                        </div>
+                        <div class="profile-item"><label>Phone</label>
+                            <p>+61 3 9000 1234 ext. 105</p>
+                        </div>
+                        <div class="profile-item"><label>Mobile</label>
+                            <p>+61 412 345 678</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Employment Details</h3>
+                    </div>
+                    <div class="profile-grid">
+                        <div class="profile-item"><label>Staff ID</label>
+                            <p>STF-00012</p>
+                        </div>
+                        <div class="profile-item"><label>Role</label>
+                            <p>General Staff</p>
+                        </div>
+                        <div class="profile-item"><label>Department</label>
+                            <p>Front Office / Multi-function</p>
+                        </div>
+                        <div class="profile-item"><label>Branch</label>
+                            <p>Melbourne CBD</p>
+                        </div>
+                        <div class="profile-item"><label>Joined</label>
+                            <p>15 March 2023</p>
+                        </div>
+                        <div class="profile-item"><label>Reporting To</label>
+                            <p>Ms. Linda Carter (Admin Manager)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Change Password</h3>
+                    </div>
+                    <form style="max-width: 400px;">
+                        <div class="form-group">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-input" placeholder="Enter current password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-input" placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-input" placeholder="Confirm new password">
+                        </div>
+                        <button class="btn btn-primary">Update Password</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Prescription - St. George Hospital</title>
+    <link rel="stylesheet" href="css/doctor-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Schedule</p>
+                <a href="appointments.html" class="nav-item">📅 Today's Appointments</a>
+                <a href="schedule.html" class="nav-item">🗓️ My Schedule</a>
+                <p class="nav-section">Patients</p>
+                <a href="patients.html" class="nav-item">👥 My Patients</a>
+                <a href="consultation.html" class="nav-item">📝 Consultation</a>
+                <p class="nav-section">Orders</p>
+                <a href="prescriptions.html" class="nav-item active">💊 Prescriptions</a>
+                <a href="lab-orders.html" class="nav-item">🔬 Lab Orders</a>
+                <a href="lab-results.html" class="nav-item">📊 Lab Results</a>
+                <p class="nav-section">Documents</p>
+                <a href="certificates.html" class="nav-item">📄 Certificates</a>
+                <a href="referrals.html" class="nav-item">🔄 Referrals</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search medicines...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">Dr. Sarah Johnson</div>
+                        <div class="user-role">General Medicine</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Write Prescription</h1>
+                        <p class="page-subtitle">Patient: Emma Wilson (PAT-2026-001012) | Consultation Date: 27 January
+                            2026</p>
+                    </div>
+                </div>
+
+                <!-- Allergy Alert -->
+                <div class="alert alert-danger">
+                    <span>⚠️</span>
+                    <div><strong>ALLERGY ALERT:</strong> Penicillin, Aspirin</div>
+                </div>
+
+                <!-- Add Medicines -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Medications</h3>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Search Medicine</label>
+                        <input type="text" class="form-input" placeholder="🔍 Type medicine name...">
+                        <div
+                            style="margin-top: 8px; padding: 8px; background: #f9fafb; border-radius: 4px; font-size: 13px;">
+                            <p style="font-weight: 500; margin-bottom: 4px;">Suggestions:</p>
+                            <p style="padding: 4px; cursor: pointer;">• Propranolol 40mg Tablet</p>
+                            <p style="padding: 4px; cursor: pointer;">• Propranolol 80mg Tablet</p>
+                            <p style="padding: 4px; cursor: pointer;">• Propranolol 10mg Tablet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prescription Items -->
+                <div class="section-header">PRESCRIPTION ITEMS</div>
+
+                <div class="prescription-item">
+                    <div class="prescription-header">
+                        <div class="medicine-name">1. Propranolol 40mg Tablet</div>
+                        <button class="btn btn-sm btn-outline" style="color: #dc2626;">Remove</button>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Dosage</label>
+                            <select class="form-select">
+                                <option selected>1 tablet(s)</option>
+                                <option>2 tablet(s)</option>
+                                <option>0.5 tablet(s)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Frequency</label>
+                            <select class="form-select">
+                                <option selected>Once daily</option>
+                                <option>Twice daily</option>
+                                <option>Three times daily</option>
+                                <option>As needed (PRN)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Duration (days)</label>
+                            <input type="number" class="form-input" value="30">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Quantity (auto)</label>
+                            <input type="number" class="form-input" value="30" readonly style="background: #f9fafb;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Time of Day</label>
+                        <div class="flex gap-4">
+                            <label><input type="radio" name="time1"> Morning</label>
+                            <label><input type="radio" name="time1"> Afternoon</label>
+                            <label><input type="radio" name="time1" checked> Night</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instructions</label>
+                        <input type="text" class="form-input" value="Take at bedtime. Do not stop suddenly.">
+                    </div>
+                    <div class="alert alert-success">
+                        <span>✅</span>
+                        <div>Interaction Check: No interactions found with current medications</div>
+                    </div>
+                </div>
+
+                <div class="prescription-item">
+                    <div class="prescription-header">
+                        <div class="medicine-name">2. Sumatriptan 50mg Tablet</div>
+                        <button class="btn btn-sm btn-outline" style="color: #dc2626;">Remove</button>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Dosage</label>
+                            <select class="form-select">
+                                <option selected>1 tablet(s)</option>
+                                <option>2 tablet(s)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Frequency</label>
+                            <select class="form-select">
+                                <option>Once daily</option>
+                                <option selected>As needed (PRN)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Duration (days)</label>
+                            <input type="number" class="form-input" value="30">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" class="form-input" value="10">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Instructions</label>
+                        <input type="text" class="form-input" value="Take at onset of migraine. Max 2 tablets per day.">
+                    </div>
+                    <div class="alert alert-success">
+                        <span>✅</span>
+                        <div>Interaction Check: No interactions found</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline" style="margin-bottom: 16px;">+ Add Another Medicine</button>
+
+                <!-- Templates -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Templates</h3>
+                        <select class="form-select" style="width: auto;">
+                            <option>Load Template...</option>
+                            <option>Migraine - Standard</option>
+                            <option>Hypertension - Initial</option>
+                            <option>Diabetes - Routine</option>
+                            <option>Common Cold</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-sm btn-outline">+ Save Current as Template</button>
+                </div>
+
+                <!-- Notes & Options -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Additional Notes for Pharmacist</h3>
+                    </div>
+                    <textarea class="form-textarea"
+                        rows="2">Please counsel patient on gradual dose adjustment if needed.</textarea>
+                    <div style="margin-top: 16px;">
+                        <label style="display: block; margin-bottom: 8px;"><input type="checkbox" checked> Allow generic
+                            substitution</label>
+                        <label style="display: block; margin-bottom: 8px;"><input type="checkbox"> Brand name
+                            only</label>
+                        <label style="display: block; margin-bottom: 8px;"><input type="checkbox" checked> Send to
+                            patient portal</label>
+                        <label style="display: block;"><input type="checkbox" checked> Send to pharmacy</label>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button class="btn btn-outline">Cancel</button>
+                    <button class="btn btn-outline">Preview</button>
+                    <button class="btn btn-primary">Generate Prescription</button>
+                </div>
+
+                <!-- Prescription Preview -->
+                <div class="card mt-4" style="border: 2px solid #2563eb;">
+                    <div style="text-align: center; padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                        <h2 style="font-size: 20px; font-weight: bold;">ST. GEORGE HOSPITAL GROUP</h2>
+                        <p>Melbourne CBD Branch</p>
+                        <p class="text-sm">123 Collins Street, Melbourne VIC 3000 | Phone: +61 (03) 9000 1234</p>
+                    </div>
+                    <div style="padding: 16px;">
+                        <div class="flex justify-between mb-4">
+                            <div>
+                                <h3 style="font-weight: 600;">PRESCRIPTION</h3>
+                                <p class="text-sm">Date: 27 January 2026</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <p><strong>Rx No:</strong> RX-2026-004890</p>
+                            </div>
+                        </div>
+                        <div style="background: #f9fafb; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                            <p><strong>Patient:</strong> Emma Wilson</p>
+                            <p><strong>Patient ID:</strong> PAT-2026-001012</p>
+                            <p><strong>Age/Gender:</strong> 34 years / Female</p>
+                        </div>
+                        <h4 style="font-weight: 600; margin-bottom: 12px;">℞</h4>
+                        <div style="margin-bottom: 16px; padding-left: 16px;">
+                            <p><strong>1. Propranolol 40mg Tablet</strong></p>
+                            <p style="margin-left: 16px;">Sig: Take ONE tablet at NIGHT</p>
+                            <p style="margin-left: 16px;">Quantity: 30 tablets | Duration: 30 days</p>
+                        </div>
+                        <div style="margin-bottom: 16px; padding-left: 16px;">
+                            <p><strong>2. Sumatriptan 50mg Tablet</strong></p>
+                            <p style="margin-left: 16px;">Sig: Take ONE tablet at onset of migraine (Max 2/day)</p>
+                            <p style="margin-left: 16px;">Quantity: 10 tablets | Duration: As needed</p>
+                        </div>
+                        <div style="border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 16px;">
+                            <p><strong>Diagnosis:</strong> Migraine (G43.909)</p>
+                            <p><strong>Notes:</strong> Review in 4 weeks. Maintain headache diary.</p>
+                        </div>
+                        <div style="margin-top: 24px;">
+                            <p><strong>Dr. Sarah Johnson</strong></p>
+                            <p class="text-sm">Registration No: MED-VIC-12345 | General Medicine</p>
+                            <p class="text-sm" style="color: #22c55e;">✓ Digitally Signed</p>
+                        </div>
+                    </div>
+                    <div
+                        style="text-align: center; padding: 12px; background: #f9fafb; font-size: 12px; color: #6b7280;">
+                        This prescription is valid for 6 months from date of issue. For PBS items, Medicare card
+                        required.
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

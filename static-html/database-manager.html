@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Manager - St. George Hospital</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <p class="nav-section">Main Menu</p>
+                <a href="dashboard.html" class="nav-item">Dashboard</a>
+                <a href="patients.html" class="nav-item">Patients</a>
+                <a href="appointments.html" class="nav-item">Appointments</a>
+                <a href="doctor-directory.html" class="nav-item">Find Doctors</a>
+                <a href="book-appointment.html" class="nav-item">Book Slot</a>
+                <a href="patient-lab-tests.html" class="nav-item">Lab Tests</a>
+                <p class="nav-section">Operations</p>
+                <a href="doctor-schedules.html" class="nav-item">Physician Sched</a>
+                <a href="inventory.html" class="nav-item">Branch Stock</a>
+                <a href="billing.html" class="nav-item">Billing</a>
+                <p class="nav-section">Resources</p>
+                <a href="medicine-catalog.html" class="nav-item">Medicine Catalog</a>
+                <a href="lab-tests.html" class="nav-item">Admin Lab Tests</a>
+                <a href="rooms.html" class="nav-item">Rooms</a>
+                <p class="nav-section">System Admin</p>
+                <a href="branches.html" class="nav-item">Branches</a>
+                <a href="user-management.html" class="nav-item">Users</a>
+                <a href="database-manager.html" class="nav-item active">Mock Database</a>
+                <a href="settings.html" class="nav-item">Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-info">
+                    <div style="text-align: right;">
+                        <p class="user-name">Dr. Sarah Mitchell</p>
+                        <p class="user-role">ADMIN</p>
+                    </div>
+                    <img src="https://picsum.photos/seed/admin/36/36" alt="User" class="user-avatar">
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Mock Database Manager</h1>
+                        <p class="page-subtitle">View and manage demo data for testing</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mb-4">
+                    <div>
+                        <p><strong>⚠️ Development Tool</strong></p>
+                        <p class="text-sm">This is a mock database for demonstration purposes. Data is stored in browser
+                            localStorage and will reset on page refresh.</p>
+                    </div>
+                </div>
+
+                <div class="grid-2 mb-4">
+                    <div class="card">
+                        <h3 class="card-title mb-4">Database Actions</h3>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <button class="btn btn-primary">Reset to Default Data</button>
+                            <button class="btn btn-secondary">Export Data (JSON)</button>
+                            <button class="btn btn-secondary">Import Data</button>
+                            <button class="btn btn-danger">Clear All Data</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title mb-4">Database Statistics</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div style="padding: 12px; background: #f9fafb; border-radius: 4px;">
+                                <p class="text-sm text-gray">Users</p>
+                                <p style="font-size: 24px; font-weight: bold;">156</p>
+                            </div>
+                            <div style="padding: 12px; background: #f9fafb; border-radius: 4px;">
+                                <p class="text-sm text-gray">Patients</p>
+                                <p style="font-size: 24px; font-weight: bold;">87</p>
+                            </div>
+                            <div style="padding: 12px; background: #f9fafb; border-radius: 4px;">
+                                <p class="text-sm text-gray">Appointments</p>
+                                <p style="font-size: 24px; font-weight: bold;">342</p>
+                            </div>
+                            <div style="padding: 12px; background: #f9fafb; border-radius: 4px;">
+                                <p class="text-sm text-gray">Bills</p>
+                                <p style="font-size: 24px; font-weight: bold;">156</p>
+                            </div>
+                            <div style="padding: 12px; background: #f9fafb; border-radius: 4px;">
+                                <p class="text-sm text-gray">Medicines</p>
+                                <p style="font-size: 24px; font-weight: bold;">452</p>
+                            </div>
+                            <div style="padding: 12px; background: #f9fafb; border-radius: 4px;">
+                                <p class="text-sm text-gray">Branches</p>
+                                <p style="font-size: 24px; font-weight: bold;">3</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Data Tables</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Table Name</th>
+                                    <th>Records</th>
+                                    <th>Last Modified</th>
+                                    <th>Size</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>users</strong></td>
+                                    <td>156</td>
+                                    <td>Today, 10:30 AM</td>
+                                    <td>45 KB</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>patients</strong></td>
+                                    <td>87</td>
+                                    <td>Today, 10:25 AM</td>
+                                    <td>32 KB</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>doctors</strong></td>
+                                    <td>24</td>
+                                    <td>Yesterday</td>
+                                    <td>12 KB</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>appointments</strong></td>
+                                    <td>342</td>
+                                    <td>Today, 11:00 AM</td>
+                                    <td>78 KB</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>bills</strong></td>
+                                    <td>156</td>
+                                    <td>Today, 9:45 AM</td>
+                                    <td>28 KB</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>medicines</strong></td>
+                                    <td>452</td>
+                                    <td>Last week</td>
+                                    <td>56 KB</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>inventory</strong></td>
+                                    <td>1,245</td>
+                                    <td>Today, 8:00 AM</td>
+                                    <td>120 KB</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - St. George Hospital</title>
+    <link rel="stylesheet" href="css/admin-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <div>
+                    <div class="sidebar-title">St. George Hospital</div>
+                    <div class="sidebar-subtitle">Admin Portal</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Management</p>
+                <a href="branches.html" class="nav-item">🏥 Branch Management</a>
+                <a href="users.html" class="nav-item">👥 User Management</a>
+                <a href="doctors.html" class="nav-item">👨‍⚕️ Doctor Management</a>
+                <a href="departments.html" class="nav-item">🏷️ Departments</a>
+                <a href="services.html" class="nav-item">💰 Service Charges</a>
+                <p class="nav-section">Analytics</p>
+                <a href="reports.html" class="nav-item">📊 Reports</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item active">👤 My Profile</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="branch-selector">
+                    <select>
+                        <option>All Branches</option>
+                        <option>Melbourne CBD</option>
+                        <option>Sydney CBD</option>
+                        <option>Brisbane</option>
+                    </select>
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">John Administrator</div>
+                        <div class="user-role">System Admin</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">My Profile</h1>
+                        <p class="page-subtitle">View and update your profile information</p>
+                    </div>
+                    <button class="btn btn-outline">Edit</button>
+                </div>
+
+                <div class="card">
+                    <div class="flex gap-4 items-center mb-4">
+                        <div
+                            style="width: 80px; height: 80px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: bold;">
+                            JA</div>
+                        <div>
+                            <h2 style="font-size: 20px;">John Administrator</h2>
+                            <p class="text-gray">User ID: USR-004</p>
+                            <p class="text-gray">Role: System Administrator</p>
+                            <p class="text-gray">Access: All Branches</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Contact Information</h3>
+                    </div>
+                    <div class="profile-grid">
+                        <div class="profile-item"><label>Email</label>
+                            <p>admin@stgeorgehospital.com.au</p>
+                        </div>
+                        <div class="profile-item"><label>Phone</label>
+                            <p>+61 3 9000 1234</p>
+                        </div>
+                        <div class="profile-item"><label>Username</label>
+                            <p>admin</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Account Info</h3>
+                    </div>
+                    <div class="profile-grid">
+                        <div class="profile-item"><label>Created</label>
+                            <p>01 January 2024</p>
+                        </div>
+                        <div class="profile-item"><label>Last Login</label>
+                            <p>27 January 2026, 08:00 AM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Change Password</h3>
+                    </div>
+                    <form style="max-width: 400px;">
+                        <div class="form-group">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-input" placeholder="Enter current password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-input" placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-input" placeholder="Confirm new password">
+                        </div>
+                        <button class="btn btn-primary">Update Password</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records - St. George Hospital</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <p class="nav-section">Main Menu</p>
+                <a href="dashboard.html" class="nav-item">Dashboard</a>
+                <a href="patients.html" class="nav-item">Patients</a>
+                <a href="appointments.html" class="nav-item">Appointments</a>
+                <a href="doctor-directory.html" class="nav-item">Find Doctors</a>
+                <a href="book-appointment.html" class="nav-item">Book Slot</a>
+                <a href="patient-lab-tests.html" class="nav-item">Lab Tests</a>
+                <p class="nav-section">Operations</p>
+                <a href="doctor-schedules.html" class="nav-item">Physician Sched</a>
+                <a href="inventory.html" class="nav-item">Branch Stock</a>
+                <a href="billing.html" class="nav-item">Billing</a>
+                <a href="medical-records.html" class="nav-item active">Medical Records</a>
+                <p class="nav-section">Resources</p>
+                <a href="medicine-catalog.html" class="nav-item">Medicine Catalog</a>
+                <a href="lab-tests.html" class="nav-item">Admin Lab Tests</a>
+                <a href="rooms.html" class="nav-item">Rooms</a>
+                <p class="nav-section">System Admin</p>
+                <a href="branches.html" class="nav-item">Branches</a>
+                <a href="user-management.html" class="nav-item">Users</a>
+                <a href="database-manager.html" class="nav-item">Mock Database</a>
+                <a href="settings.html" class="nav-item">Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search records...">
+                </div>
+                <div class="user-info">
+                    <div style="text-align: right;">
+                        <p class="user-name">Dr. Sarah Mitchell</p>
+                        <p class="user-role">ADMIN</p>
+                    </div>
+                    <img src="https://picsum.photos/seed/admin/36/36" alt="User" class="user-avatar">
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Medical Records</h1>
+                        <p class="page-subtitle">View and manage patient medical records</p>
+                    </div>
+                    <button class="btn btn-primary">+ Add Record</button>
+                </div>
+
+                <!-- Filters -->
+                <div class="card mb-4">
+                    <div class="flex gap-4">
+                        <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                            <label class="form-label">Patient</label>
+                            <input type="text" class="form-input" placeholder="Search patient...">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                            <label class="form-label">Record Type</label>
+                            <select class="form-select">
+                                <option>All Types</option>
+                                <option>Consultation</option>
+                                <option>Diagnosis</option>
+                                <option>Lab Results</option>
+                                <option>Prescription</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                            <label class="form-label">Date Range</label>
+                            <input type="date" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Medical Records</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Record ID</th>
+                                    <th>Patient</th>
+                                    <th>Type</th>
+                                    <th>Doctor</th>
+                                    <th>Date</th>
+                                    <th>Summary</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>MR-2026-001</strong></td>
+                                    <td>John Doe</td>
+                                    <td><span class="badge badge-blue">Consultation</span></td>
+                                    <td>Dr. James Wilson</td>
+                                    <td>Jan 22, 2026</td>
+                                    <td>General checkup, vitals normal</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>MR-2026-002</strong></td>
+                                    <td>Jane Smith</td>
+                                    <td><span class="badge badge-green">Lab Results</span></td>
+                                    <td>Dr. Emily Parker</td>
+                                    <td>Jan 21, 2026</td>
+                                    <td>Blood work - cholesterol elevated</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>MR-2026-003</strong></td>
+                                    <td>Robert Johnson</td>
+                                    <td><span class="badge badge-yellow">Diagnosis</span></td>
+                                    <td>Dr. Michael Chen</td>
+                                    <td>Jan 20, 2026</td>
+                                    <td>Mild sprain, rest recommended</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>MR-2026-004</strong></td>
+                                    <td>Emily Davis</td>
+                                    <td><span class="badge badge-red">Prescription</span></td>
+                                    <td>Dr. James Wilson</td>
+                                    <td>Jan 19, 2026</td>
+                                    <td>Antibiotics for infection</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>MR-2026-005</strong></td>
+                                    <td>Michael Brown</td>
+                                    <td><span class="badge badge-blue">Consultation</span></td>
+                                    <td>Dr. Emily Parker</td>
+                                    <td>Jan 18, 2026</td>
+                                    <td>Follow-up, condition improving</td>
+                                    <td><button class="btn btn-secondary"
+                                            style="padding: 4px 8px; font-size: 12px;">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Results - St. George Hospital</title>
+    <link rel="stylesheet" href="css/patient-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Appointments</p>
+                <a href="appointments.html" class="nav-item">📅 My Appointments</a>
+                <a href="book-appointment.html" class="nav-item">➕ Book New</a>
+                <p class="nav-section">Health Records</p>
+                <a href="medical-records.html" class="nav-item">📋 Medical Records</a>
+                <a href="prescriptions.html" class="nav-item">💊 Prescriptions</a>
+                <a href="lab-results.html" class="nav-item active">🔬 Lab Results</a>
+                <p class="nav-section">Billing</p>
+                <a href="billing.html" class="nav-item">💳 Bills & Payments</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+                <a href="notifications.html" class="nav-item">🔔 Notifications</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search lab results...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">John Smith</div>
+                        <div class="user-role">Patient</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Lab Results</h1>
+                        <p class="page-subtitle">View your laboratory test results</p>
+                    </div>
+                </div>
+
+                <div class="lab-card">
+                    <div class="lab-header">
+                        <div class="lab-title">
+                            <div class="lab-icon">🔬</div>
+                            <div>
+                                <div class="lab-name">Complete Blood Count (CBC)</div>
+                                <div class="lab-meta">Test Date: 20 January 2026 | Dr. Sarah Johnson</div>
+                            </div>
+                        </div>
+                        <span class="badge badge-green">🟢 Normal</span>
+                    </div>
+                    <p class="text-sm text-gray">Lab: Melbourne CBD Pathology | Status: ✅ Results Ready</p>
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-primary btn-sm">View Full Report</button>
+                        <button class="btn btn-outline btn-sm">Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="lab-card">
+                    <div class="lab-header">
+                        <div class="lab-title">
+                            <div class="lab-icon">🔬</div>
+                            <div>
+                                <div class="lab-name">Lipid Profile</div>
+                                <div class="lab-meta">Test Date: 02 December 2025 | Dr. Michael Chen</div>
+                            </div>
+                        </div>
+                        <span class="badge badge-yellow">🟡 Review Needed</span>
+                    </div>
+                    <p class="text-sm text-gray">Lab: Melbourne CBD Pathology | Status: ✅ Results Ready</p>
+                    <p class="text-sm" style="color: #854d0e; margin-top: 4px;">⚠️ Some values outside normal range</p>
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-primary btn-sm">View Full Report</button>
+                        <button class="btn btn-outline btn-sm">Download PDF</button>
+                    </div>
+                </div>
+
+                <div class="lab-card">
+                    <div class="lab-header">
+                        <div class="lab-title">
+                            <div class="lab-icon">🔬</div>
+                            <div>
+                                <div class="lab-name">Blood Glucose (Fasting)</div>
+                                <div class="lab-meta">Test Date: 02 December 2025 | Dr. Michael Chen</div>
+                            </div>
+                        </div>
+                        <span class="badge badge-green">🟢 Normal</span>
+                    </div>
+                    <p class="text-sm text-gray">Lab: Melbourne CBD Pathology | Status: ✅ Results Ready</p>
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-primary btn-sm">View Full Report</button>
+                        <button class="btn btn-outline btn-sm">Download PDF</button>
+                    </div>
+                </div>
+
+                <!-- Lab Result Detail -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Lab Report - LAB-2026-008834</h3>
+                        <button class="btn btn-outline btn-sm">Download PDF</button>
+                    </div>
+                    <div style="background: #f9fafb; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                        <div class="grid-2">
+                            <div class="profile-item">
+                                <label>Test Name</label>
+                                <p>Complete Blood Count (CBC)</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Report ID</label>
+                                <p>LAB-2026-008834</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Collection Date</label>
+                                <p>20 January 2026, 08:30 AM</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Report Date</label>
+                                <p>20 January 2026, 02:15 PM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Result</th>
+                                    <th>Reference Range</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Hemoglobin</td>
+                                    <td><strong>14.2 g/dL</strong></td>
+                                    <td>13.5 - 17.5 g/dL</td>
+                                    <td><span class="badge badge-green">Normal</span></td>
+                                </tr>
+                                <tr>
+                                    <td>RBC Count</td>
+                                    <td><strong>4.8 M/μL</strong></td>
+                                    <td>4.5 - 5.5 M/μL</td>
+                                    <td><span class="badge badge-green">Normal</span></td>
+                                </tr>
+                                <tr>
+                                    <td>WBC Count</td>
+                                    <td><strong>7,500 /μL</strong></td>
+                                    <td>4,500 - 11,000 /μL</td>
+                                    <td><span class="badge badge-green">Normal</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Platelet Count</td>
+                                    <td><strong>250,000 /μL</strong></td>
+                                    <td>150,000 - 400,000 /μL</td>
+                                    <td><span class="badge badge-green">Normal</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Hematocrit</td>
+                                    <td><strong>42%</strong></td>
+                                    <td>38.8 - 50.0%</td>
+                                    <td><span class="badge badge-green">Normal</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="alert alert-success mt-4">
+                        <span>✅</span>
+                        <div>
+                            <strong>Interpretation:</strong> All parameters within normal limits. No abnormalities
+                            detected.
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bills & Payments - St. George Hospital</title>
+    <link rel="stylesheet" href="css/patient-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Appointments</p>
+                <a href="appointments.html" class="nav-item">📅 My Appointments</a>
+                <a href="book-appointment.html" class="nav-item">➕ Book New</a>
+                <p class="nav-section">Health Records</p>
+                <a href="medical-records.html" class="nav-item">📋 Medical Records</a>
+                <a href="prescriptions.html" class="nav-item">💊 Prescriptions</a>
+                <a href="lab-results.html" class="nav-item">🔬 Lab Results</a>
+                <p class="nav-section">Billing</p>
+                <a href="billing.html" class="nav-item active">💳 Bills & Payments</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+                <a href="notifications.html" class="nav-item">🔔 Notifications</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search bills...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">John Smith</div>
+                        <div class="user-role">Patient</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Bills & Payments</h1>
+                        <p class="page-subtitle">Manage your invoices and make payments</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p class="text-sm text-gray">Total Outstanding</p>
+                        <p style="font-size: 24px; font-weight: bold; color: #eab308;">$245.00</p>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active">Outstanding (2)</button>
+                    <button class="tab">Payment History</button>
+                </div>
+
+                <div class="bill-card">
+                    <div class="bill-header">
+                        <div>
+                            <div class="bill-number">Invoice #INV-2026-001234</div>
+                            <p class="text-sm text-gray">Date: 15 January 2026</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="bill-amount">$150.00</div>
+                            <span class="badge badge-yellow">Pending</span>
+                        </div>
+                    </div>
+                    <div style="padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
+                        <p><strong>Description:</strong> Consultation - Dr. Sarah Johnson</p>
+                        <p class="text-sm text-gray">Branch: Melbourne CBD | Due: 30 January 2026</p>
+                    </div>
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-outline btn-sm">View Details</button>
+                        <button class="btn btn-primary btn-sm">💳 Pay Now</button>
+                    </div>
+                </div>
+
+                <div class="bill-card">
+                    <div class="bill-header">
+                        <div>
+                            <div class="bill-number">Invoice #INV-2026-001198</div>
+                            <p class="text-sm text-gray">Date: 20 January 2026</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <div class="bill-amount">$95.00</div>
+                            <span class="badge badge-yellow">Pending</span>
+                        </div>
+                    </div>
+                    <div style="padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
+                        <p><strong>Description:</strong> Pathology - Complete Blood Count</p>
+                        <p class="text-sm text-gray">Branch: Melbourne CBD | Due: 05 February 2026</p>
+                    </div>
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-outline btn-sm">View Details</button>
+                        <button class="btn btn-primary btn-sm">💳 Pay Now</button>
+                    </div>
+                </div>
+
+                <div style="text-align: right; margin-top: 16px;">
+                    <button class="btn btn-primary">💳 Pay All Outstanding: $245.00</button>
+                </div>
+
+                <!-- Payment Form -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Make Payment</h3>
+                    </div>
+                    <div style="background: #f9fafb; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                        <p><strong>Invoice:</strong> INV-2026-001234</p>
+                        <p style="font-size: 20px; font-weight: bold; color: #2563eb;">Amount Due: $111.50</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Card Number</label>
+                        <input type="text" class="form-input" placeholder="XXXX XXXX XXXX XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cardholder Name</label>
+                        <input type="text" class="form-input" value="John Smith">
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="text" class="form-input" placeholder="MM / YY">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CVV</label>
+                            <input type="text" class="form-input" placeholder="XXX">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" style="width: 100%;">💳 Pay $111.50</button>
+                    <p class="text-sm text-gray text-center mt-4">🔒 Secured by 256-bit SSL encryption</p>
+                </div>
+
+                <!-- Payment History -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Payment History</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Receipt No</th>
+                                    <th>Date</th>
+                                    <th>Invoice</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>TXN-2026-009100</td>
+                                    <td>10 Jan 2026</td>
+                                    <td>INV-2026-001100</td>
+                                    <td>$120.00</td>
+                                    <td>Visa ****4242</td>
+                                    <td><span class="badge badge-green">Completed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>TXN-2025-008500</td>
+                                    <td>15 Dec 2025</td>
+                                    <td>INV-2025-004500</td>
+                                    <td>$85.00</td>
+                                    <td>Mastercard ****1234</td>
+                                    <td><span class="badge badge-green">Completed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

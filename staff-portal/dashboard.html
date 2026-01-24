@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - St. George Hospital</title>
+    <link rel="stylesheet" href="css/staff-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active">🏠 Dashboard</a>
+                <p class="nav-section">Patients</p>
+                <a href="patients.html" class="nav-item">👤 Register/Search</a>
+                <p class="nav-section">Appointments</p>
+                <a href="appointments.html" class="nav-item">📅 Schedule & Booking</a>
+                <p class="nav-section">Services</p>
+                <a href="laboratory.html" class="nav-item">🔬 Laboratory</a>
+                <a href="pharmacy.html" class="nav-item">💊 Pharmacy</a>
+                <a href="billing.html" class="nav-item">💳 Billing</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box"><input type="text" placeholder="Search..."></div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">Jane Smith</div>
+                        <div class="user-role">General Staff</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="welcome-banner">
+                    <h1 class="welcome-title">Welcome, Jane Smith!</h1>
+                    <p class="welcome-subtitle">Staff ID: STF-00012 | Role: General Staff | Monday, 27 January 2026</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📅</div>
+                        <div class="stat-label">Today's Appointments</div>
+                        <div class="stat-value">18</div>
+                        <a href="appointments.html" class="stat-link">View All →</a>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow">⏳</div>
+                        <div class="stat-label">Waiting Patients</div>
+                        <div class="stat-value">5</div>
+                        <a href="appointments.html" class="stat-link">View Queue →</a>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">🔬</div>
+                        <div class="stat-label">Pending Lab Results</div>
+                        <div class="stat-value">3</div>
+                        <a href="laboratory.html" class="stat-link">Enter Results →</a>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">💊</div>
+                        <div class="stat-label">Pending Prescriptions</div>
+                        <div class="stat-value">4</div>
+                        <a href="pharmacy.html" class="stat-link">Dispense →</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Quick Actions</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <a href="patients.html" class="quick-action-btn">👤 Register Patient</a>
+                        <a href="appointments.html" class="quick-action-btn">📅 Book Appointment</a>
+                        <a href="patients.html" class="quick-action-btn">🔍 Search Patient</a>
+                        <a href="laboratory.html" class="quick-action-btn">🔬 Enter Lab Result</a>
+                        <a href="pharmacy.html" class="quick-action-btn">💊 Dispense Medicine</a>
+                        <a href="billing.html" class="quick-action-btn">💳 Create Bill</a>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Today's Appointments</h3>
+                            <a href="appointments.html" class="btn btn-sm btn-outline">View Full</a>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Patient</th>
+                                    <th>Doctor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>09:00</td>
+                                    <td>John Smith</td>
+                                    <td>Dr. Sarah Johnson</td>
+                                    <td><span class="badge badge-green">✅ Done</span></td>
+                                </tr>
+                                <tr>
+                                    <td>09:30</td>
+                                    <td>Mary Johnson</td>
+                                    <td>Dr. Sarah Johnson</td>
+                                    <td><span class="badge badge-blue">🔵 In</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10:00</td>
+                                    <td>Robert Brown</td>
+                                    <td>Dr. Sarah Johnson</td>
+                                    <td><span class="badge badge-yellow">⏳ Wait</span></td>
+                                </tr>
+                                <tr>
+                                    <td>10:30</td>
+                                    <td>Emma Wilson</td>
+                                    <td>Dr. Sarah Johnson</td>
+                                    <td><span class="badge badge-gray">🕐 Schd</span></td>
+                                </tr>
+                                <tr>
+                                    <td>11:00</td>
+                                    <td>James Taylor</td>
+                                    <td>Dr. Michael Chen</td>
+                                    <td><span class="badge badge-gray">🕐 Schd</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Recent Activity</h3>
+                        </div>
+                        <ul style="list-style: none;">
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">• Bill paid - $150 <span
+                                    class="text-gray text-sm">(2 mins ago)</span></li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">• Lab result entered <span
+                                    class="text-gray text-sm">(5 mins ago)</span></li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">• Patient registered <span
+                                    class="text-gray text-sm">(10 mins ago)</span></li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #e5e7eb;">• Prescription dispensed <span
+                                    class="text-gray text-sm">(12 mins ago)</span></li>
+                            <li style="padding: 8px 0;">• Appointment booked <span class="text-gray text-sm">(15 mins
+                                    ago)</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Today's Summary</h3>
+                    </div>
+                    <div class="stats-grid" style="margin-bottom: 0;">
+                        <div style="text-align: center; padding: 12px; background: #f9fafb; border-radius: 4px;">
+                            <div style="font-size: 24px; font-weight: bold;">3</div>
+                            <div class="text-sm text-gray">Patients Registered</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: #f9fafb; border-radius: 4px;">
+                            <div style="font-size: 24px; font-weight: bold;">18</div>
+                            <div class="text-sm text-gray">Appointments</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: #f9fafb; border-radius: 4px;">
+                            <div style="font-size: 24px; font-weight: bold;">$1,250</div>
+                            <div class="text-sm text-gray">Bills Collected</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: #f9fafb; border-radius: 4px;">
+                            <div style="font-size: 24px; font-weight: bold;">8</div>
+                            <div class="text-sm text-gray">Prescriptions Dispensed</div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

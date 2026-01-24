@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Certificates - St. George Hospital</title>
+    <link rel="stylesheet" href="css/doctor-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Schedule</p>
+                <a href="appointments.html" class="nav-item">📅 Today's Appointments</a>
+                <a href="schedule.html" class="nav-item">🗓️ My Schedule</a>
+                <p class="nav-section">Patients</p>
+                <a href="patients.html" class="nav-item">👥 My Patients</a>
+                <a href="consultation.html" class="nav-item">📝 Consultation</a>
+                <p class="nav-section">Orders</p>
+                <a href="prescriptions.html" class="nav-item">💊 Prescriptions</a>
+                <a href="lab-orders.html" class="nav-item">🔬 Lab Orders</a>
+                <a href="lab-results.html" class="nav-item">📊 Lab Results</a>
+                <p class="nav-section">Documents</p>
+                <a href="certificates.html" class="nav-item active">📄 Certificates</a>
+                <a href="referrals.html" class="nav-item">🔄 Referrals</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">Dr. Sarah Johnson</div>
+                        <div class="user-role">General Medicine</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Issue Medical Certificate</h1>
+                        <p class="page-subtitle">Patient: Emma Wilson (PAT-2026-001012) | Consultation Date: 27 January
+                            2026</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Certificate Type</h3>
+                    </div>
+                    <div class="flex gap-4">
+                        <label
+                            style="padding: 16px; border: 2px solid #2563eb; border-radius: 4px; cursor: pointer; background: #eff6ff;">
+                            <input type="radio" name="cert-type" checked style="margin-right: 8px;"> Sick Leave
+                            Certificate
+                        </label>
+                        <label style="padding: 16px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                            <input type="radio" name="cert-type" style="margin-right: 8px;"> Fitness to Work
+                        </label>
+                        <label style="padding: 16px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                            <input type="radio" name="cert-type" style="margin-right: 8px;"> Fitness to Travel
+                        </label>
+                        <label style="padding: 16px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer;">
+                            <input type="radio" name="cert-type" style="margin-right: 8px;"> General Medical
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Certificate Details</h3>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Period of Leave - From</label>
+                            <input type="date" class="form-input" value="2026-01-27">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Period of Leave - To</label>
+                            <input type="date" class="form-input" value="2026-01-29">
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray mb-4">Duration: 3 days</p>
+
+                    <div class="form-group">
+                        <label class="form-label">Condition/Reason</label>
+                        <div class="flex gap-4">
+                            <label><input type="radio" name="condition"> Show diagnosis</label>
+                            <label><input type="radio" name="condition" checked> "Medical condition"
+                                (confidential)</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Additional Comments</label>
+                        <textarea class="form-textarea"
+                            rows="3">Patient is unfit for work due to a medical condition and requires rest. Review recommended if symptoms persist beyond specified period.</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Recommendations</label>
+                        <div>
+                            <label style="display: block; margin-bottom: 8px;"><input type="checkbox" checked> Rest at
+                                home</label>
+                            <label style="display: block; margin-bottom: 8px;"><input type="checkbox"> Light duties
+                                only</label>
+                            <label style="display: block; margin-bottom: 8px;"><input type="checkbox"> Avoid
+                                driving</label>
+                            <label style="display: block;"><input type="checkbox"> Avoid heavy lifting</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Employer/Institution Name (optional)</label>
+                        <input type="text" class="form-input" value="ABC Corporation Pty Ltd">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button class="btn btn-outline">Preview Certificate</button>
+                        <button class="btn btn-primary">Generate & Sign Certificate</button>
+                    </div>
+                </div>
+
+                <!-- Certificate Preview -->
+                <div class="card" style="border: 2px solid #2563eb;">
+                    <div style="text-align: center; padding: 16px; border-bottom: 1px solid #e5e7eb;">
+                        <h2 style="font-size: 20px; font-weight: bold;">ST. GEORGE HOSPITAL GROUP</h2>
+                        <p>Melbourne CBD Branch</p>
+                        <p class="text-sm">123 Collins Street, Melbourne VIC 3000 | Phone: +61 (03) 9000 1234</p>
+                    </div>
+                    <div style="padding: 24px;">
+                        <h3
+                            style="text-align: center; font-size: 18px; margin-bottom: 24px; text-decoration: underline;">
+                            MEDICAL CERTIFICATE</h3>
+
+                        <p style="margin-bottom: 16px;"><strong>Date:</strong> 27 January 2026</p>
+                        <p style="margin-bottom: 16px;"><strong>Certificate No:</strong> CERT-2026-001234</p>
+
+                        <p style="margin-bottom: 16px;">This is to certify that:</p>
+
+                        <div style="background: #f9fafb; padding: 16px; border-radius: 4px; margin-bottom: 16px;">
+                            <p><strong>Name:</strong> Emma Wilson</p>
+                            <p><strong>Patient ID:</strong> PAT-2026-001012</p>
+                            <p><strong>Date of Birth:</strong> 15 May 1991</p>
+                        </div>
+
+                        <p style="margin-bottom: 16px;">
+                            Was examined by me on <strong>27 January 2026</strong> and in my opinion is suffering from a
+                            <strong>medical condition</strong> and will be unfit for work/duties for the period:
+                        </p>
+
+                        <p style="margin-bottom: 16px; text-align: center; font-size: 18px;">
+                            <strong>From:</strong> 27 January 2026 &nbsp;&nbsp;&nbsp; <strong>To:</strong> 29 January
+                            2026
+                            <br><strong>(3 days)</strong>
+                        </p>
+
+                        <p style="margin-bottom: 16px;"><strong>Recommendations:</strong> Rest at home</p>
+
+                        <p style="margin-bottom: 24px;"><strong>For:</strong> ABC Corporation Pty Ltd</p>
+
+                        <div style="margin-top: 32px;">
+                            <p><strong>Dr. Sarah Johnson</strong></p>
+                            <p class="text-sm">MBBS, FRACGP</p>
+                            <p class="text-sm">Registration No: MED-VIC-12345</p>
+                            <p class="text-sm" style="color: #22c55e;">✓ Digitally Signed</p>
+                        </div>
+                    </div>
+                    <div
+                        style="text-align: center; padding: 12px; background: #f9fafb; font-size: 12px; color: #6b7280;">
+                        This is a computer-generated certificate and is valid without a physical signature.
+                    </div>
+                </div>
+
+                <!-- Recent Certificates -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Recent Certificates</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Cert No</th>
+                                    <th>Patient</th>
+                                    <th>Type</th>
+                                    <th>Period</th>
+                                    <th>Date Issued</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>CERT-2026-001198</td>
+                                    <td>John Smith</td>
+                                    <td>Sick Leave</td>
+                                    <td>24-25 Jan (2 days)</td>
+                                    <td>24 Jan 2026</td>
+                                    <td><button class="btn btn-sm btn-outline">View</button></td>
+                                </tr>
+                                <tr>
+                                    <td>CERT-2026-001150</td>
+                                    <td>Mary Johnson</td>
+                                    <td>Fitness to Work</td>
+                                    <td>N/A</td>
+                                    <td>20 Jan 2026</td>
+                                    <td><button class="btn btn-sm btn-outline">View</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

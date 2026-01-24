@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branch Management - St. George Hospital</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+            <nav class="sidebar-nav">
+                <p class="nav-section">Main Menu</p>
+                <a href="dashboard.html" class="nav-item">Dashboard</a>
+                <a href="patients.html" class="nav-item">Patients</a>
+                <a href="appointments.html" class="nav-item">Appointments</a>
+                <a href="doctor-directory.html" class="nav-item">Find Doctors</a>
+                <a href="book-appointment.html" class="nav-item">Book Slot</a>
+                <a href="patient-lab-tests.html" class="nav-item">Lab Tests</a>
+                <p class="nav-section">Operations</p>
+                <a href="doctor-schedules.html" class="nav-item">Physician Sched</a>
+                <a href="inventory.html" class="nav-item">Branch Stock</a>
+                <a href="billing.html" class="nav-item">Billing</a>
+                <p class="nav-section">Resources</p>
+                <a href="medicine-catalog.html" class="nav-item">Medicine Catalog</a>
+                <a href="lab-tests.html" class="nav-item">Admin Lab Tests</a>
+                <a href="rooms.html" class="nav-item">Rooms</a>
+                <p class="nav-section">System Admin</p>
+                <a href="branches.html" class="nav-item active">Branches</a>
+                <a href="user-management.html" class="nav-item">Users</a>
+                <a href="database-manager.html" class="nav-item">Mock Database</a>
+                <a href="settings.html" class="nav-item">Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="index.html" class="logout-btn">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search branches...">
+                </div>
+                <div class="user-info">
+                    <div style="text-align: right;">
+                        <p class="user-name">Dr. Sarah Mitchell</p>
+                        <p class="user-role">ADMIN</p>
+                    </div>
+                    <img src="https://picsum.photos/seed/admin/36/36" alt="User" class="user-avatar">
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Branch Management</h1>
+                        <p class="page-subtitle">Manage hospital branches and locations</p>
+                    </div>
+                    <button class="btn btn-primary">+ Add Branch</button>
+                </div>
+
+                <!-- Branch Cards -->
+                <div class="grid-3">
+                    <div class="card">
+                        <div style="margin-bottom: 16px;">
+                            <h3 style="font-size: 18px; font-weight: bold;">Main Hospital</h3>
+                            <p class="text-sm text-gray">Sydney CBD</p>
+                            <span class="badge badge-green mt-4">Active</span>
+                        </div>
+                        <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; font-size: 14px;">
+                            <p><strong>Address:</strong> 123 George Street, Sydney NSW 2000</p>
+                            <p><strong>Phone:</strong> (02) 9000-0001</p>
+                            <p><strong>Rooms:</strong> 80</p>
+                            <p><strong>Staff:</strong> 120</p>
+                        </div>
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-secondary" style="flex: 1;">Edit</button>
+                            <button class="btn btn-primary" style="flex: 1;">View Details</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="margin-bottom: 16px;">
+                            <h3 style="font-size: 18px; font-weight: bold;">North Clinic</h3>
+                            <p class="text-sm text-gray">Chatswood</p>
+                            <span class="badge badge-green mt-4">Active</span>
+                        </div>
+                        <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; font-size: 14px;">
+                            <p><strong>Address:</strong> 45 Railway Street, Chatswood NSW 2067</p>
+                            <p><strong>Phone:</strong> (02) 9000-0002</p>
+                            <p><strong>Rooms:</strong> 25</p>
+                            <p><strong>Staff:</strong> 35</p>
+                        </div>
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-secondary" style="flex: 1;">Edit</button>
+                            <button class="btn btn-primary" style="flex: 1;">View Details</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div style="margin-bottom: 16px;">
+                            <h3 style="font-size: 18px; font-weight: bold;">South Clinic</h3>
+                            <p class="text-sm text-gray">Hurstville</p>
+                            <span class="badge badge-green mt-4">Active</span>
+                        </div>
+                        <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; font-size: 14px;">
+                            <p><strong>Address:</strong> 78 Forest Road, Hurstville NSW 2220</p>
+                            <p><strong>Phone:</strong> (02) 9000-0003</p>
+                            <p><strong>Rooms:</strong> 15</p>
+                            <p><strong>Staff:</strong> 20</p>
+                        </div>
+                        <div class="flex gap-2 mt-4">
+                            <button class="btn btn-secondary" style="flex: 1;">Edit</button>
+                            <button class="btn btn-primary" style="flex: 1;">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branch Summary Table -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Branch Summary</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Branch</th>
+                                    <th>Location</th>
+                                    <th>Total Rooms</th>
+                                    <th>Available</th>
+                                    <th>Occupied</th>
+                                    <th>Staff Count</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Main Hospital</strong></td>
+                                    <td>Sydney CBD</td>
+                                    <td>80</td>
+                                    <td>32</td>
+                                    <td>48</td>
+                                    <td>120</td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>North Clinic</strong></td>
+                                    <td>Chatswood</td>
+                                    <td>25</td>
+                                    <td>10</td>
+                                    <td>15</td>
+                                    <td>35</td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>South Clinic</strong></td>
+                                    <td>Hurstville</td>
+                                    <td>15</td>
+                                    <td>3</td>
+                                    <td>12</td>
+                                    <td>20</td>
+                                    <td><span class="badge badge-green">Active</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

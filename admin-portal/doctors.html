@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Management - St. George Hospital</title>
+    <link rel="stylesheet" href="css/admin-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <div>
+                    <div class="sidebar-title">St. George Hospital</div>
+                    <div class="sidebar-subtitle">Admin Portal</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+                <p class="nav-section">Management</p>
+                <a href="branches.html" class="nav-item">🏥 Branch Management</a>
+                <a href="users.html" class="nav-item">👥 User Management</a>
+                <a href="doctors.html" class="nav-item active">👨‍⚕️ Doctor Management</a>
+                <a href="departments.html" class="nav-item">🏷️ Departments</a>
+                <a href="services.html" class="nav-item">💰 Service Charges</a>
+                <p class="nav-section">Analytics</p>
+                <a href="reports.html" class="nav-item">📊 Reports</a>
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <div class="main-content">
+            <header class="navbar">
+                <div class="branch-selector">
+                    <select>
+                        <option>All Branches</option>
+                        <option>Melbourne CBD</option>
+                        <option>Sydney CBD</option>
+                        <option>Brisbane</option>
+                    </select>
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">John Administrator</div>
+                        <div class="user-role">System Admin</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Doctor Management</h1>
+                        <p class="page-subtitle">Manage doctor profiles, specializations, and schedules</p>
+                    </div>
+                    <button class="btn btn-primary">+ Add New Doctor</button>
+                </div>
+
+                <div class="flex gap-2 mb-4">
+                    <select class="form-select" style="width: auto;">
+                        <option>All Branches</option>
+                        <option>Melbourne CBD</option>
+                        <option>Sydney CBD</option>
+                        <option>Brisbane</option>
+                    </select>
+                    <select class="form-select" style="width: auto;">
+                        <option>All Departments</option>
+                        <option>General Medicine</option>
+                        <option>Cardiology</option>
+                        <option>Orthopedics</option>
+                    </select>
+                    <select class="form-select" style="width: auto;">
+                        <option>All Status</option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                    </select>
+                    <input type="text" class="form-input" placeholder="🔍 Search doctors..." style="width: 200px;">
+                </div>
+
+                <!-- Doctor Cards -->
+                <div class="doctor-card">
+                    <div class="branch-header">
+                        <div>
+                            <div class="branch-name">👨‍⚕️ Dr. Sarah Johnson</div>
+                            <div class="branch-meta">Employee ID: EMP-00045</div>
+                        </div>
+                        <span class="badge badge-green">🟢 Active</span>
+                    </div>
+                    <p class="text-sm"><strong>Department:</strong> General Medicine</p>
+                    <p class="text-sm"><strong>Branch:</strong> Melbourne CBD</p>
+                    <p class="text-sm"><strong>License:</strong> MED-VIC-12345 (Valid till: Jun 2026)</p>
+                    <p class="text-sm"><strong>Consultation Fee:</strong> $85.00</p>
+                    <p class="text-sm mt-4"><strong>This Week:</strong> 42 appointments | <strong>This Month:</strong>
+                        168 patients</p>
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-sm btn-outline">View Profile</button>
+                        <button class="btn btn-sm btn-outline">Edit</button>
+                        <button class="btn btn-sm btn-outline">Manage Schedule</button>
+                    </div>
+                </div>
+
+                <div class="doctor-card">
+                    <div class="branch-header">
+                        <div>
+                            <div class="branch-name">👨‍⚕️ Dr. Michael Chen</div>
+                            <div class="branch-meta">Employee ID: EMP-00046</div>
+                        </div>
+                        <span class="badge badge-green">🟢 Active</span>
+                    </div>
+                    <p class="text-sm"><strong>Department:</strong> Cardiology</p>
+                    <p class="text-sm"><strong>Branch:</strong> Melbourne CBD</p>
+                    <p class="text-sm"><strong>License:</strong> MED-VIC-12346 (Valid till: Aug 2026)</p>
+                    <p class="text-sm"><strong>Consultation Fee:</strong> $120.00</p>
+                    <p class="text-sm mt-4"><strong>This Week:</strong> 35 appointments | <strong>This Month:</strong>
+                        140 patients</p>
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-sm btn-outline">View Profile</button>
+                        <button class="btn btn-sm btn-outline">Edit</button>
+                        <button class="btn btn-sm btn-outline">Manage Schedule</button>
+                    </div>
+                </div>
+
+                <div class="doctor-card">
+                    <div class="branch-header">
+                        <div>
+                            <div class="branch-name">👨‍⚕️ Dr. Emily Brown</div>
+                            <div class="branch-meta">Employee ID: EMP-00052</div>
+                        </div>
+                        <span class="badge badge-green">🟢 Active</span>
+                    </div>
+                    <p class="text-sm"><strong>Department:</strong> General Medicine</p>
+                    <p class="text-sm"><strong>Branch:</strong> Sydney CBD</p>
+                    <p class="text-sm"><strong>License:</strong> MED-NSW-54321 (Valid till: Mar 2026)</p>
+                    <p class="text-sm"><strong>Consultation Fee:</strong> $85.00</p>
+                    <p class="text-sm mt-4"><strong>This Week:</strong> 38 appointments | <strong>This Month:</strong>
+                        152 patients</p>
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-sm btn-outline">View Profile</button>
+                        <button class="btn btn-sm btn-outline">Edit</button>
+                        <button class="btn btn-sm btn-outline">Manage Schedule</button>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray">Showing 1-3 of 18 doctors</p>
+
+                <!-- Add Doctor Form (hidden by default) -->
+                <div class="card" style="display: none;">
+                    <div class="card-header">
+                        <h3 class="card-title">Add New Doctor</h3>
+                    </div>
+
+                    <div class="section-header">PERSONAL INFORMATION</div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">First Name *</label>
+                            <input type="text" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Last Name *</label>
+                            <input type="text" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email *</label>
+                            <input type="email" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone *</label>
+                            <input type="tel" class="form-input" placeholder="+61">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gender *</label>
+                            <select class="form-select">
+                                <option>Select</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date" class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="section-header">PROFESSIONAL INFORMATION</div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Assigned Branch *</label>
+                            <select class="form-select">
+                                <option>Select Branch</option>
+                                <option>Melbourne CBD</option>
+                                <option>Sydney CBD</option>
+                                <option>Brisbane</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Department *</label>
+                            <select class="form-select">
+                                <option>Select Department</option>
+                                <option>General Medicine</option>
+                                <option>Cardiology</option>
+                                <option>Orthopedics</option>
+                                <option>Pediatrics</option>
+                                <option>Dermatology</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Medical License Number *</label>
+                            <input type="text" class="form-input" placeholder="e.g., MED-VIC-12345">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">License Expiry Date *</label>
+                            <input type="date" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Specialization</label>
+                        <input type="text" class="form-input" placeholder="e.g., MBBS, FRACGP">
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Years of Experience</label>
+                            <input type="number" class="form-input" value="10">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Consultation Fee ($) *</label>
+                            <input type="number" class="form-input" value="85.00">
+                        </div>
+                    </div>
+
+                    <div class="section-header">DEFAULT SCHEDULE</div>
+                    <table class="schedule-table">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Working</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Slot</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Monday</td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="time" class="form-input" value="09:00" style="width: 100px;"></td>
+                                <td><input type="time" class="form-input" value="17:00" style="width: 100px;"></td>
+                                <td><select class="form-select" style="width: 100px;">
+                                        <option>30 mins</option>
+                                        <option>15 mins</option>
+                                        <option>45 mins</option>
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Tuesday</td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="time" class="form-input" value="09:00" style="width: 100px;"></td>
+                                <td><input type="time" class="form-input" value="17:00" style="width: 100px;"></td>
+                                <td><select class="form-select" style="width: 100px;">
+                                        <option>30 mins</option>
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Wednesday</td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="time" class="form-input" style="width: 100px;" disabled></td>
+                                <td><input type="time" class="form-input" style="width: 100px;" disabled></td>
+                                <td><select class="form-select" style="width: 100px;" disabled>
+                                        <option>--</option>
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Thursday</td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="time" class="form-input" value="09:00" style="width: 100px;"></td>
+                                <td><input type="time" class="form-input" value="17:00" style="width: 100px;"></td>
+                                <td><select class="form-select" style="width: 100px;">
+                                        <option>30 mins</option>
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Friday</td>
+                                <td><input type="checkbox" checked></td>
+                                <td><input type="time" class="form-input" value="09:00" style="width: 100px;"></td>
+                                <td><input type="time" class="form-input" value="17:00" style="width: 100px;"></td>
+                                <td><select class="form-select" style="width: 100px;">
+                                        <option>30 mins</option>
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Saturday</td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="time" class="form-input" style="width: 100px;" disabled></td>
+                                <td><input type="time" class="form-input" style="width: 100px;" disabled></td>
+                                <td><select class="form-select" style="width: 100px;" disabled>
+                                        <option>--</option>
+                                    </select></td>
+                            </tr>
+                            <tr>
+                                <td>Sunday</td>
+                                <td><input type="checkbox"></td>
+                                <td><input type="time" class="form-input" style="width: 100px;" disabled></td>
+                                <td><input type="time" class="form-input" style="width: 100px;" disabled></td>
+                                <td><select class="form-select" style="width: 100px;" disabled>
+                                        <option>--</option>
+                                    </select></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="grid-2 mt-4">
+                        <div class="form-group">
+                            <label class="form-label">Lunch Break Start</label>
+                            <input type="time" class="form-input" value="12:00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lunch Break End</label>
+                            <input type="time" class="form-input" value="13:30">
+                        </div>
+                    </div>
+
+                    <div class="section-header">ACCOUNT CREDENTIALS</div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Username *</label>
+                            <input type="text" class="form-input" placeholder="(auto-generated from email)">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password *</label>
+                            <div class="flex gap-2">
+                                <input type="password" class="form-input" value="••••••••">
+                                <button class="btn btn-sm btn-outline">Generate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" checked> Send login credentials to doctor's email</label>
+                    </div>
+
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-outline">Cancel</button>
+                        <button class="btn btn-primary">Create Doctor</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

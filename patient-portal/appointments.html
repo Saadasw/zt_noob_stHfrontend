@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments - St. George Hospital</title>
+    <link rel="stylesheet" href="css/patient-portal.css">
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">SG</div>
+                <span class="sidebar-title">St. George</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item">🏠 Dashboard</a>
+
+                <p class="nav-section">Appointments</p>
+                <a href="appointments.html" class="nav-item active">📅 My Appointments</a>
+                <a href="book-appointment.html" class="nav-item">➕ Book New</a>
+
+                <p class="nav-section">Health Records</p>
+                <a href="medical-records.html" class="nav-item">📋 Medical Records</a>
+                <a href="prescriptions.html" class="nav-item">💊 Prescriptions</a>
+                <a href="lab-results.html" class="nav-item">🔬 Lab Results</a>
+
+                <p class="nav-section">Billing</p>
+                <a href="billing.html" class="nav-item">💳 Bills & Payments</a>
+
+                <p class="nav-section">Account</p>
+                <a href="profile.html" class="nav-item">👤 My Profile</a>
+                <a href="notifications.html" class="nav-item">🔔 Notifications</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="../static-html/index.html" class="logout-btn">🚪 Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Search appointments...">
+                </div>
+                <div class="user-info">
+                    <div>
+                        <div class="user-name">John Smith</div>
+                        <div class="user-role">Patient</div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="page-content">
+                <!-- Header -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">My Appointments</h1>
+                        <p class="page-subtitle">View and manage your appointments</p>
+                    </div>
+                    <a href="book-appointment.html" class="btn btn-primary">➕ Book New Appointment</a>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active">Upcoming</button>
+                    <button class="tab">Past Appointments</button>
+                </div>
+
+                <!-- Upcoming Appointments -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Upcoming Appointments</h3>
+                        <span class="badge badge-blue">2 appointments</span>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Appointment ID</th>
+                                    <th>Date & Time</th>
+                                    <th>Doctor</th>
+                                    <th>Department</th>
+                                    <th>Branch</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>APT-2026-001234</strong></td>
+                                    <td>
+                                        <div style="font-weight: 500;">27 Jan 2026</div>
+                                        <div class="text-sm text-gray">10:30 AM</div>
+                                    </td>
+                                    <td>Dr. Sarah Johnson</td>
+                                    <td>General Medicine</td>
+                                    <td>Melbourne CBD</td>
+                                    <td><span class="badge badge-green">Confirmed</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline">View</button>
+                                        <button class="btn btn-sm btn-outline">Reschedule</button>
+                                        <button class="btn btn-sm btn-outline">Cancel</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>APT-2026-001289</strong></td>
+                                    <td>
+                                        <div style="font-weight: 500;">05 Feb 2026</div>
+                                        <div class="text-sm text-gray">02:00 PM</div>
+                                    </td>
+                                    <td>Dr. Michael Chen</td>
+                                    <td>Cardiology</td>
+                                    <td>Sydney CBD</td>
+                                    <td><span class="badge badge-yellow">Pending</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline">View</button>
+                                        <button class="btn btn-sm btn-outline">Reschedule</button>
+                                        <button class="btn btn-sm btn-outline">Cancel</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Appointment Details -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Appointment Details - APT-2026-001234</h3>
+                        <span class="badge badge-green">Confirmed</span>
+                    </div>
+                    <div class="grid-2">
+                        <div>
+                            <div class="profile-item">
+                                <label>Date</label>
+                                <p>Monday, 27 January 2026</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Time</label>
+                                <p>10:30 AM - 11:00 AM</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Type</label>
+                                <p>Follow-up Consultation</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Reason</label>
+                                <p>Follow-up for respiratory infection</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="profile-item">
+                                <label>Doctor</label>
+                                <p>Dr. Sarah Johnson</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Department</label>
+                                <p>General Medicine</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Branch</label>
+                                <p>Melbourne CBD</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Address</label>
+                                <p>123 Collins Street, Melbourne VIC 3000</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4">
+                        <span>ℹ️</span>
+                        <div>
+                            <strong>Reminder:</strong> Please arrive 15 minutes before your scheduled time. Bring your
+                            Medicare card.
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 mt-4">
+                        <button class="btn btn-primary">Download Appointment Slip</button>
+                        <button class="btn btn-outline">Get Directions</button>
+                        <button class="btn btn-outline">Add to Calendar</button>
+                    </div>
+                </div>
+
+                <!-- Past Appointments -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Past Appointments</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Appointment ID</th>
+                                    <th>Date & Time</th>
+                                    <th>Doctor</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>APT-2026-001100</strong></td>
+                                    <td>
+                                        <div style="font-weight: 500;">15 Jan 2026</div>
+                                        <div class="text-sm text-gray">09:00 AM</div>
+                                    </td>
+                                    <td>Dr. Sarah Johnson</td>
+                                    <td>General Medicine</td>
+                                    <td><span class="badge badge-gray">Completed</span></td>
+                                    <td>
+                                        <a href="medical-records.html" class="btn btn-sm btn-outline">View Record</a>
+                                        <button class="btn btn-sm btn-primary">Book Follow-up</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>APT-2025-004521</strong></td>
+                                    <td>
+                                        <div style="font-weight: 500;">02 Dec 2025</div>
+                                        <div class="text-sm text-gray">02:30 PM</div>
+                                    </td>
+                                    <td>Dr. Michael Chen</td>
+                                    <td>Cardiology</td>
+                                    <td><span class="badge badge-gray">Completed</span></td>
+                                    <td>
+                                        <a href="medical-records.html" class="btn btn-sm btn-outline">View Record</a>
+                                        <button class="btn btn-sm btn-primary">Book Follow-up</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>
