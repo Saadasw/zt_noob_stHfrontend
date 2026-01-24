@@ -1,8 +1,0 @@
-{
-  "name": "St. George Hospital HMS",
-  "description": "A comprehensive multi-branch Hospital Management System for St. George Hospital featuring patient records, doctor scheduling, lab management, and AI-powered diagnostic assistance.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
-}
