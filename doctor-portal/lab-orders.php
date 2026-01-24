@@ -3,9 +3,80 @@ require '../includes/auth_session.php';
 require '../config/db_connect.php';
 require_role(['doctor']);
 
-$page_title = 'Order Lab Tests - St. George Hospital';
+$page_title = 'Lab Orders - St. George Hospital';
 $page_css = 'css/doctor-portal.css';
 $current_page = 'lab-orders';
+
+$message = '';
+$error = '';
+
+// Get Doctor Profile
+$stmt = $pdo->prepare("SELECT id FROM doctor_profiles WHERE user_id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$doctor = $stmt->fetch();
+$doctor_id = $doctor['id'];
+
+// Get appointment context if provided
+$apt_id = $_GET['apt_id'] ?? null;
+$patient = null;
+
+if ($apt_id) {
+    $stmt = $pdo->prepare("
+        SELECT a.*, pp.id as patient_profile_id, pp.patient_id as patient_code,
+               u.name as patient_name
+        FROM appointments a
+        JOIN patient_profiles pp ON a.patient_id = pp.id
+        JOIN users u ON pp.user_id = u.id
+        WHERE a.id = ?
+    ");
+    $stmt->execute([$apt_id]);
+    $patient = $stmt->fetch();
+}
+
+// Fetch test types
+$test_types = $pdo->query("SELECT * FROM lab_test_types WHERE is_active = 1 ORDER BY name")->fetchAll();
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_tests'])) {
+    $patient_id = $_POST['patient_id'];
+    $tests = $_POST['tests'] ?? [];
+    $priority = $_POST['priority'] ?? 'routine';
+    $notes = trim($_POST['notes']);
+
+    if (empty($patient_id) || empty($tests)) {
+        $error = "Please select a patient and at least one test.";
+    } else {
+        try {
+            foreach ($tests as $test_type_id) {
+                $test_id = 'LAB-' . bin2hex(random_bytes(4));
+                $test_no = 'LT-' . date('Y') . '-' . mt_rand(100000, 999999);
+
+                $stmt = $pdo->prepare("INSERT INTO lab_tests (id, test_no, patient_id, doctor_id, test_type_id, branch_id, priority, status, result) VALUES (?, ?, ?, ?, ?, 'BR-MEL-01', ?, 'ordered', ?)");
+                $stmt->execute([$test_id, $test_no, $patient_id, $doctor_id, $test_type_id, $priority, $notes]);
+            }
+            $message = count($tests) . " lab test(s) ordered successfully!";
+        } catch (PDOException $e) {
+            $error = "Error: " . $e->getMessage();
+        }
+    }
+}
+
+// Fetch patients for dropdown
+$patients_list = $pdo->query("SELECT pp.id, pp.patient_id, u.name FROM patient_profiles pp JOIN users u ON pp.user_id = u.id ORDER BY u.name")->fetchAll();
+
+// Fetch recent orders by this doctor
+$recent_orders = $pdo->prepare("
+    SELECT lt.*, ltt.name as test_name, u.name as patient_name, pp.patient_id as patient_code
+    FROM lab_tests lt
+    JOIN lab_test_types ltt ON lt.test_type_id = ltt.id
+    JOIN patient_profiles pp ON lt.patient_id = pp.id
+    JOIN users u ON pp.user_id = u.id
+    WHERE lt.doctor_id = ?
+    ORDER BY lt.created_at DESC
+    LIMIT 20
+");
+$recent_orders->execute([$doctor_id]);
+$orders = $recent_orders->fetchAll();
 
 include '../includes/header.php';
 include '../includes/sidebar_doctor.php';
@@ -17,120 +88,129 @@ include '../includes/sidebar_doctor.php';
     <main class="page-content">
         <div class="page-header">
             <div>
-                <h1 class="page-title">Order Lab Tests</h1>
-                <p class="page-subtitle">Patient: Emma Wilson (PAT-2026-001012) | Date: <?php echo date('d F Y'); ?></p>
+                <h1 class="page-title">Lab Orders</h1>
+                <p class="page-subtitle">Order lab tests and view results</p>
             </div>
         </div>
 
-        <!-- Search -->
+        <?php if ($message): ?>
+            <div class="alert alert-success"><?php echo h($message); ?></div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="alert alert-danger"><?php echo h($error); ?></div>
+        <?php endif; ?>
+
+        <div class="tabs">
+            <button class="tab active">Order New Test</button>
+            <button class="tab">My Orders</button>
+        </div>
+
         <div class="card">
-            <div class="form-group">
-                <label class="form-label">Search Test</label>
-                <input type="text" class="form-input" placeholder="🔍 Type test name...">
-            </div>
+            <div class="card-header"><h3 class="card-title">Order Lab Tests</h3></div>
+            <form method="POST">
+                <input type="hidden" name="order_tests" value="1">
+
+                <?php if ($patient): ?>
+                    <input type="hidden" name="patient_id" value="<?php echo $patient['patient_profile_id']; ?>">
+                    <p><strong>Patient:</strong> <?php echo h($patient['patient_name']); ?> (<?php echo h($patient['patient_code']); ?>)</p>
+                <?php else: ?>
+                <div class="form-group">
+                    <label class="form-label">Patient *</label>
+                    <select name="patient_id" class="form-select" required>
+                        <option value="">Select Patient...</option>
+                        <?php foreach ($patients_list as $p): ?>
+                            <option value="<?php echo $p['id']; ?>"><?php echo h($p['name']); ?> (<?php echo h($p['patient_id']); ?>)</option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <?php endif; ?>
+
+                <div class="section-header">SELECT TESTS</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; margin-bottom: 16px;">
+                    <?php foreach ($test_types as $tt): ?>
+                    <label style="display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 4px; cursor: pointer;">
+                        <input type="checkbox" name="tests[]" value="<?php echo $tt['id']; ?>">
+                        <div>
+                            <div style="font-weight: 500;"><?php echo h($tt['name']); ?></div>
+                            <div class="text-sm text-gray">$<?php echo number_format($tt['price'], 2); ?></div>
+                        </div>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Priority</label>
+                        <select name="priority" class="form-select">
+                            <option value="routine">Routine</option>
+                            <option value="urgent">Urgent</option>
+                            <option value="stat">STAT (Emergency)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Clinical Notes</label>
+                    <textarea name="notes" class="form-textarea" rows="2" placeholder="Reason for tests, clinical suspicion..."></textarea>
+                </div>
+
+                <div class="flex gap-2">
+                    <a href="appointments.php" class="btn btn-outline">Cancel</a>
+                    <button type="submit" class="btn btn-primary">🔬 Order Tests</button>
+                </div>
+            </form>
         </div>
 
-        <!-- Common Panels -->
-        <div class="section-header">COMMON TEST PANELS</div>
-        <div class="grid-3">
-            <label class="test-checkbox"><input type="checkbox"> Complete Blood Count (CBC)</label>
-            <label class="test-checkbox selected"><input type="checkbox" checked> Lipid Profile</label>
-            <label class="test-checkbox"><input type="checkbox"> Liver Function Test (LFT)</label>
-            <label class="test-checkbox"><input type="checkbox"> Kidney Function Test (KFT)</label>
-            <label class="test-checkbox selected"><input type="checkbox" checked> Thyroid Panel (TSH, T3,
-                T4)</label>
-            <label class="test-checkbox"><input type="checkbox"> HbA1c</label>
-            <label class="test-checkbox"><input type="checkbox"> Blood Glucose (Fasting)</label>
-            <label class="test-checkbox"><input type="checkbox"> Electrolytes</label>
-            <label class="test-checkbox"><input type="checkbox"> Urinalysis</label>
-        </div>
-
-        <!-- Individual Tests -->
-        <div class="section-header">INDIVIDUAL TESTS</div>
-        <div class="grid-3">
-            <label class="test-checkbox"><input type="checkbox"> ESR</label>
-            <label class="test-checkbox"><input type="checkbox"> CRP</label>
-            <label class="test-checkbox selected"><input type="checkbox" checked> Vitamin D</label>
-            <label class="test-checkbox"><input type="checkbox"> Vitamin B12</label>
-            <label class="test-checkbox"><input type="checkbox"> Iron Studies</label>
-            <label class="test-checkbox"><input type="checkbox"> Ferritin</label>
-        </div>
-
-        <!-- Selected Tests -->
-        <div class="section-header">SELECTED TESTS (3)</div>
         <div class="card">
-            <div style="padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <strong>1. Lipid Profile</strong>
-                        <p class="text-sm text-gray">Includes: Total Cholesterol, LDL, HDL, Triglycerides</p>
-                        <p class="text-sm text-gray">Sample: Blood (Fasting required)</p>
-                    </div>
-                    <button class="btn btn-sm btn-outline" style="color: #dc2626;">Remove</button>
-                </div>
-            </div>
-            <div style="padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <strong>2. Thyroid Panel (TSH, T3, T4)</strong>
-                        <p class="text-sm text-gray">Sample: Blood</p>
-                    </div>
-                    <button class="btn btn-sm btn-outline" style="color: #dc2626;">Remove</button>
-                </div>
-            </div>
-            <div style="padding: 12px 0;">
-                <div class="flex justify-between items-center">
-                    <div>
-                        <strong>3. Vitamin D (25-OH)</strong>
-                        <p class="text-sm text-gray">Sample: Blood</p>
-                    </div>
-                    <button class="btn btn-sm btn-outline" style="color: #dc2626;">Remove</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Order Details -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Order Details</h3>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Priority</label>
-                <div class="flex gap-4">
-                    <label><input type="radio" name="priority"> Routine</label>
-                    <label><input type="radio" name="priority" checked> Urgent</label>
-                    <label><input type="radio" name="priority"> STAT</label>
-                </div>
-            </div>
-            <div class="alert alert-warning">
-                <span>⚠️</span>
-                <div><strong>Fasting Required:</strong> Lipid Profile requires 10-12 hours fasting</div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Preferred Lab</label>
-                <select class="form-select">
-                    <option selected>Melbourne CBD Pathology</option>
-                    <option>Sydney CBD Pathology</option>
-                    <option>Brisbane Pathology</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Clinical Notes for Lab</label>
-                <textarea class="form-textarea"
-                    rows="3">Patient with chronic migraines. Checking for secondary causes. Please check thyroid and vitamin D levels.</textarea>
-            </div>
-            <div style="margin-top: 16px;">
-                <label style="display: block; margin-bottom: 8px;"><input type="checkbox" checked> Send copy to
-                    patient portal</label>
-                <label style="display: block;"><input type="checkbox" checked> Notify me when results are
-                    ready</label>
+            <div class="card-header"><h3 class="card-title">Recent Orders</h3></div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test No</th>
+                            <th>Patient</th>
+                            <th>Test</th>
+                            <th>Status</th>
+                            <th>Ordered</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($orders as $o): ?>
+                        <tr>
+                            <td><strong><?php echo h($o['test_no']); ?></strong></td>
+                            <td><?php echo h($o['patient_name']); ?></td>
+                            <td><?php echo h($o['test_name']); ?></td>
+                            <td>
+                                <?php
+                                $status_badges = [
+                                    'ordered' => '<span class="badge badge-yellow">Ordered</span>',
+                                    'sample_pending' => '<span class="badge badge-yellow">Sample Pending</span>',
+                                    'sample_collected' => '<span class="badge badge-blue">Collected</span>',
+                                    'processing' => '<span class="badge badge-blue">Processing</span>',
+                                    'completed' => '<span class="badge badge-green">Completed</span>',
+                                ];
+                                echo $status_badges[$o['status']] ?? $o['status'];
+                                ?>
+                            </td>
+                            <td><?php echo date('d M Y', strtotime($o['created_at'])); ?></td>
+                            <td>
+                                <?php if ($o['status'] === 'completed'): ?>
+                                    <button class="btn btn-sm btn-primary">View Result</button>
+                                <?php else: ?>
+                                    <button class="btn btn-sm btn-outline">Track</button>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php if (empty($orders)): ?>
+                        <tr><td colspan="6" class="text-center text-gray">No lab orders yet.</td></tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <div class="flex gap-2">
-            <button class="btn btn-outline">Cancel</button>
-            <button class="btn btn-primary">Submit Lab Order</button>
-        </div>
     </main>
 </div>
 

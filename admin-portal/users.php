@@ -49,8 +49,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
     }
 }
 
-// Fetch Users
-$stmt = $pdo->query("SELECT * FROM users ORDER BY created_at DESC");
+// Handle Delete User
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_user'])) {
+    $id = $_POST['user_id'];
+    // Prevent deleting self
+    if ($id == $_SESSION['user_id']) {
+        $error = "You cannot delete your own account.";
+    } else {
+        try {
+            $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+            $stmt->execute([$id]);
+            $message = "User deleted successfully.";
+        } catch (PDOException $e) {
+            $error = "Error deleting user: " . $e->getMessage();
+        }
+    }
+}
+
+// Fetch Users with Search
+$search = $_GET['search'] ?? '';
+$sql = "SELECT * FROM users";
+$params = [];
+
+if ($search) {
+    $sql .= " WHERE name LIKE ? OR email LIKE ? OR role LIKE ?";
+    $term = "%$search%";
+    $params = [$term, $term, $term];
+}
+
+$sql .= " ORDER BY created_at DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
 $users = $stmt->fetchAll();
 
 include '../includes/header.php';
@@ -77,11 +106,14 @@ include '../includes/sidebar_admin.php';
         <?php endif; ?>
 
         <div class="card">
-            <!-- Filter Bar Mockup -->
-            <div class="flex gap-2 mb-4">
-                <input type="text" class="form-input" placeholder="🔍 Search users..." style="width: 200px;">
-                <button class="btn btn-sm btn-secondary">Search</button>
-            </div>
+            <!-- Filter Bar -->
+            <form method="GET" class="flex gap-2 mb-4">
+                <input type="text" name="search" class="form-input" placeholder="🔍 Search users..." style="width: 200px;" value="<?php echo h($search); ?>">
+                <button type="submit" class="btn btn-sm btn-secondary">Search</button>
+                <?php if($search): ?>
+                    <a href="users.php" class="btn btn-sm btn-outline">Clear</a>
+                <?php endif; ?>
+            </form>
 
             <div class="table-container">
                 <table>
@@ -114,7 +146,14 @@ include '../includes/sidebar_admin.php';
                                 <?php echo $user['is_active'] ? '<span class="badge badge-green">🟢 Active</span>' : '<span class="badge badge-red">🔴 Inactive</span>'; ?>
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-outline">Edit</button>
+                                <div class="flex gap-2">
+                                    <button class="btn btn-sm btn-outline">Edit</button>
+                                    <form method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');" style="display:inline;">
+                                        <input type="hidden" name="delete_user" value="1">
+                                        <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline" style="color: #dc2626; border-color: #dc2626;">Delete</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         <?php endforeach; ?>

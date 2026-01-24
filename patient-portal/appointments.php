@@ -7,6 +7,67 @@ $page_title = 'My Appointments - St. George Hospital';
 $page_css = 'css/patient-portal.css';
 $current_page = 'appointments';
 
+// Get Patient Profile
+$stmt = $pdo->prepare("SELECT * FROM patient_profiles WHERE user_id = ?");
+$stmt->execute([$_SESSION['user_id']]);
+$patient = $stmt->fetch();
+
+if (!$patient) {
+    die("Patient profile not found.");
+}
+$patient_profile_id = $patient['id'];
+
+$message = '';
+$error = '';
+
+// Handle Cancel
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_appointment'])) {
+    $apt_id = $_POST['apt_id'];
+    // Check if appointment is at least 24 hours away
+    $stmt = $pdo->prepare("SELECT appointment_date, start_time FROM appointments WHERE id = ? AND patient_id = ?");
+    $stmt->execute([$apt_id, $patient_profile_id]);
+    $apt = $stmt->fetch();
+    
+    if ($apt) {
+        $apt_datetime = strtotime($apt['appointment_date'] . ' ' . $apt['start_time']);
+        $hours_until = ($apt_datetime - time()) / 3600;
+        
+        if ($hours_until < 24) {
+            $error = "Cannot cancel appointment less than 24 hours before scheduled time.";
+        } else {
+            $stmt = $pdo->prepare("UPDATE appointments SET status = 'cancelled', cancelled_at = NOW(), cancellation_reason = 'Cancelled by patient' WHERE id = ?");
+            $stmt->execute([$apt_id]);
+            $message = "Appointment cancelled successfully.";
+        }
+    }
+}
+
+// Fetch Upcoming Appointments
+$stmt = $pdo->prepare("
+    SELECT a.*, u.name as doctor_name, dp.specialization, b.name as branch_name
+    FROM appointments a 
+    JOIN doctor_profiles dp ON a.doctor_id = dp.id 
+    JOIN users u ON dp.user_id = u.id
+    LEFT JOIN branches b ON a.branch_id = b.id
+    WHERE a.patient_id = ? AND a.appointment_date >= CURDATE() AND a.status NOT IN ('completed', 'cancelled', 'no_show')
+    ORDER BY a.appointment_date ASC, a.start_time ASC
+");
+$stmt->execute([$patient_profile_id]);
+$upcoming = $stmt->fetchAll();
+
+// Fetch Past Appointments
+$stmt = $pdo->prepare("
+    SELECT a.*, u.name as doctor_name, dp.specialization
+    FROM appointments a 
+    JOIN doctor_profiles dp ON a.doctor_id = dp.id 
+    JOIN users u ON dp.user_id = u.id
+    WHERE a.patient_id = ? AND (a.appointment_date < CURDATE() OR a.status IN ('completed', 'cancelled', 'no_show'))
+    ORDER BY a.appointment_date DESC
+    LIMIT 10
+");
+$stmt->execute([$patient_profile_id]);
+$past = $stmt->fetchAll();
+
 include '../includes/header.php';
 include '../includes/sidebar_patient.php';
 ?>
@@ -23,8 +84,15 @@ include '../includes/sidebar_patient.php';
             <a href="book-appointment.php" class="btn btn-primary">➕ Book New Appointment</a>
         </div>
 
+        <?php if ($message): ?>
+            <div class="alert alert-success"><?php echo h($message); ?></div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="alert alert-danger"><?php echo h($error); ?></div>
+        <?php endif; ?>
+
         <div class="tabs">
-            <button class="tab active">Upcoming</button>
+            <button class="tab active">Upcoming (<?php echo count($upcoming); ?>)</button>
             <button class="tab">Past Appointments</button>
         </div>
 
@@ -32,8 +100,9 @@ include '../includes/sidebar_patient.php';
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Upcoming Appointments</h3>
-                <span class="badge badge-blue">2 appointments</span>
             </div>
+            
+            <?php if (count($upcoming) > 0): ?>
             <div class="table-container">
                 <table>
                     <thead>
@@ -42,47 +111,47 @@ include '../includes/sidebar_patient.php';
                             <th>Date & Time</th>
                             <th>Doctor</th>
                             <th>Department</th>
-                            <th>Branch</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php foreach ($upcoming as $apt): ?>
                         <tr>
-                            <td><strong>APT-2026-001234</strong></td>
+                            <td><strong><?php echo h($apt['appointment_no']); ?></strong></td>
                             <td>
-                                <div style="font-weight: 500;">27 Jan 2026</div>
-                                <div class="text-sm text-gray">10:30 AM</div>
+                                <div style="font-weight: 500;"><?php echo date('d M Y', strtotime($apt['appointment_date'])); ?></div>
+                                <div class="text-sm text-gray"><?php echo date('h:i A', strtotime($apt['start_time'])); ?></div>
                             </td>
-                            <td>Dr. Sarah Johnson</td>
-                            <td>General Medicine</td>
-                            <td>Melbourne CBD</td>
-                            <td><span class="badge badge-green">Confirmed</span></td>
+                            <td><?php echo h($apt['doctor_name']); ?></td>
+                            <td><?php echo h($apt['specialization']); ?></td>
                             <td>
-                                <button class="btn btn-sm btn-outline">View</button>
-                                <button class="btn btn-sm btn-outline">Reschedule</button>
-                                <button class="btn btn-sm btn-outline">Cancel</button>
+                                <?php
+                                $status_badges = [
+                                    'scheduled' => '<span class="badge badge-yellow">Scheduled</span>',
+                                    'confirmed' => '<span class="badge badge-green">Confirmed</span>',
+                                    'checked_in' => '<span class="badge badge-blue">Checked In</span>',
+                                    'in_progress' => '<span class="badge badge-blue">In Progress</span>',
+                                ];
+                                echo $status_badges[$apt['status']] ?? '<span class="badge">' . ucfirst($apt['status']) . '</span>';
+                                ?>
+                            </td>
+                            <td>
+                                <a href="book-appointment.php?reschedule=<?php echo $apt['id']; ?>" class="btn btn-sm btn-outline">Reschedule</a>
+                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
+                                    <input type="hidden" name="cancel_appointment" value="1">
+                                    <input type="hidden" name="apt_id" value="<?php echo $apt['id']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline" style="color: #dc2626;">Cancel</button>
+                                </form>
                             </td>
                         </tr>
-                        <tr>
-                            <td><strong>APT-2026-001289</strong></td>
-                            <td>
-                                <div style="font-weight: 500;">05 Feb 2026</div>
-                                <div class="text-sm text-gray">02:00 PM</div>
-                            </td>
-                            <td>Dr. Michael Chen</td>
-                            <td>Cardiology</td>
-                            <td>Sydney CBD</td>
-                            <td><span class="badge badge-yellow">Pending</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-outline">View</button>
-                                <button class="btn btn-sm btn-outline">Reschedule</button>
-                                <button class="btn btn-sm btn-outline">Cancel</button>
-                            </td>
-                        </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
+            <?php else: ?>
+            <p class="text-center text-gray p-4">No upcoming appointments. <a href="book-appointment.php">Book one now</a>.</p>
+            <?php endif; ?>
         </div>
 
         <!-- Past Appointments -->
@@ -90,6 +159,8 @@ include '../includes/sidebar_patient.php';
             <div class="card-header">
                 <h3 class="card-title">Past Appointments</h3>
             </div>
+            
+            <?php if (count($past) > 0): ?>
             <div class="table-container">
                 <table>
                     <thead>
@@ -103,23 +174,36 @@ include '../includes/sidebar_patient.php';
                         </tr>
                     </thead>
                     <tbody>
+                        <?php foreach ($past as $apt): ?>
                         <tr>
-                            <td><strong>APT-2026-001100</strong></td>
+                            <td><strong><?php echo h($apt['appointment_no']); ?></strong></td>
                             <td>
-                                <div style="font-weight: 500;">15 Jan 2026</div>
-                                <div class="text-sm text-gray">09:00 AM</div>
+                                <div style="font-weight: 500;"><?php echo date('d M Y', strtotime($apt['appointment_date'])); ?></div>
+                                <div class="text-sm text-gray"><?php echo date('h:i A', strtotime($apt['start_time'])); ?></div>
                             </td>
-                            <td>Dr. Sarah Johnson</td>
-                            <td>General Medicine</td>
-                            <td><span class="badge badge-gray">Completed</span></td>
+                            <td><?php echo h($apt['doctor_name']); ?></td>
+                            <td><?php echo h($apt['specialization']); ?></td>
                             <td>
-                                <a href="medical-records.php" class="btn btn-sm btn-outline">View Record</a>
+                                <?php if ($apt['status'] === 'completed'): ?>
+                                    <span class="badge badge-gray">Completed</span>
+                                <?php elseif ($apt['status'] === 'cancelled'): ?>
+                                    <span class="badge badge-red">Cancelled</span>
+                                <?php else: ?>
+                                    <span class="badge badge-red">No Show</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <a href="medical-records.php?apt_id=<?php echo $apt['id']; ?>" class="btn btn-sm btn-outline">View Record</a>
                                 <button class="btn btn-sm btn-primary">Book Follow-up</button>
                             </td>
                         </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
+            <?php else: ?>
+            <p class="text-center text-gray p-4">No past appointments.</p>
+            <?php endif; ?>
         </div>
     </main>
 </div>

@@ -22,73 +22,75 @@ include '../includes/sidebar_doctor.php';
             </div>
         </div>
 
-        <div class="card">
-            <div class="flex gap-4">
-                <select class="form-select" style="width: auto;">
-                    <option>All Patients</option>
-                    <option>Recent Consultations</option>
-                    <option>With Lab Alerts</option>
-                </select>
-                <select class="form-select" style="width: auto;">
-                    <option>Last 30 Days</option>
-                    <option>All Time</option>
-                </select>
-            </div>
-        </div>
+
 
         <div class="card">
+            <!-- Filter Bar -->
+            <form method="GET" class="flex gap-2 mb-4">
+                <input type="text" name="search" class="form-input" placeholder="🔍 Search by name or ID..." style="width: 250px;" value="<?php echo h($_GET['search'] ?? ''); ?>">
+                <button type="submit" class="btn btn-sm btn-secondary">Search</button>
+            </form>
+
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Patient</th>
                             <th>ID</th>
-                            <th>Last Visit</th>
-                            <th>Diagnosis</th>
+                            <th>DOB / Gender</th>
+                            <th>Emergency Contact</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php
+                        // Fetch Patients
+                        $search = $_GET['search'] ?? '';
+                        $sql = "SELECT p.*, u.name, u.email, u.phone 
+                                FROM patient_profiles p 
+                                JOIN users u ON p.user_id = u.id 
+                                WHERE u.is_active = 1";
+                        $params = [];
+
+                        if ($search) {
+                            $sql .= " AND (u.name LIKE ? OR p.patient_id LIKE ?)";
+                            $term = "%$search%";
+                            $params = [$term, $term];
+                        }
+
+                        $sql .= " ORDER BY u.name ASC LIMIT 50";
+                        $stmt = $pdo->prepare($sql);
+                        $stmt->execute($params);
+                        $patients = $stmt->fetchAll();
+
+                        if (count($patients) > 0):
+                            foreach ($patients as $patient):
+                        ?>
                         <tr>
                             <td>
-                                <strong>John Smith</strong>
-                                <div class="text-sm text-gray">Male, 45 yrs</div>
+                                <strong><?php echo h($patient['name']); ?></strong>
+                                <div class="text-sm text-gray"><?php echo h($patient['email']); ?></div>
                             </td>
-                            <td>PAT-2026-000123</td>
-                            <td>27 Jan 2026</td>
-                            <td>Hypertension</td>
-                            <td><button class="btn btn-sm btn-outline">👁️ View</button></td>
-                        </tr>
-                        <tr>
+                            <td><?php echo h($patient['patient_id']); ?></td>
                             <td>
-                                <strong>Mary Johnson</strong>
-                                <div class="text-sm text-gray">Female, 58 yrs</div>
+                                <?php echo h($patient['date_of_birth']); ?> 
+                                <span class="text-sm text-gray">(<?php echo h($patient['gender']); ?>)</span>
                             </td>
-                            <td>PAT-2026-000456</td>
-                            <td>24 Jan 2026</td>
-                            <td>Dyslipidemia <span class="badge badge-red">🔴 Lab Alert</span></td>
-                            <td><button class="btn btn-sm btn-outline">👁️ View</button></td>
-                        </tr>
-                        <tr>
                             <td>
-                                <strong>Emma Wilson</strong>
-                                <div class="text-sm text-gray">Female, 34 yrs</div>
+                                <?php echo h($patient['emergency_contact_name'] ?? '-'); ?>
+                                <div class="text-sm text-gray"><?php echo h($patient['emergency_contact_phone'] ?? ''); ?></div>
                             </td>
-                            <td>PAT-2026-001012</td>
-                            <td>27 Jan 2026</td>
-                            <td>Migraine</td>
-                            <td><button class="btn btn-sm btn-outline">👁️ View</button></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline">👁️ View Profile</button>
+                            </td>
                         </tr>
+                        <?php endforeach; else: ?>
+                        <tr>
+                            <td colspan="5" class="text-center">No patients found.</td>
+                        </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
-            </div>
-            <div class="flex justify-between items-center mt-4 text-sm text-gray">
-                <span>Showing 1-3 of 234 patients</span>
-                <div class="flex gap-2">
-                    <button class="btn btn-sm btn-outline">&lt; Prev</button>
-                    <button class="btn btn-sm btn-primary">1</button>
-                    <button class="btn btn-sm btn-outline">Next &gt;</button>
-                </div>
             </div>
         </div>
     </main>

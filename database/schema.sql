@@ -1,12 +1,19 @@
--- Hospital Management System Schema
+-- Hospital Management System - Complete Schema
+-- St. George Hospital
+-- Run this file in phpMyAdmin or MySQL to create all tables
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
+-- Create and use database
 CREATE DATABASE IF NOT EXISTS `stgeorgehospital`;
 USE `stgeorgehospital`;
 
--- 1. Users System
+-- =====================================================
+-- 1. USERS SYSTEM
+-- =====================================================
+
 CREATE TABLE `users` (
   `id` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
@@ -34,7 +41,10 @@ CREATE TABLE `profile_images` (
   CONSTRAINT `fk_profile_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 2. Organization Structure
+-- =====================================================
+-- 2. ORGANIZATION STRUCTURE
+-- =====================================================
+
 CREATE TABLE `branches` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -53,7 +63,10 @@ CREATE TABLE `branches` (
   UNIQUE KEY `code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 3. Profiles
+-- =====================================================
+-- 3. USER PROFILES
+-- =====================================================
+
 CREATE TABLE `doctor_profiles` (
   `id` varchar(255) NOT NULL,
   `user_id` varchar(255) NOT NULL,
@@ -119,7 +132,10 @@ CREATE TABLE `patient_profiles` (
   CONSTRAINT `fk_patient_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 4. Scheduling
+-- =====================================================
+-- 4. SCHEDULING
+-- =====================================================
+
 CREATE TABLE `doctor_weekly_schedules` (
   `id` varchar(255) NOT NULL,
   `doctor_id` varchar(255) NOT NULL,
@@ -156,7 +172,10 @@ CREATE TABLE `doctor_schedule_overrides` (
   CONSTRAINT `fk_override_branch` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 5. Appointments & Clinical
+-- =====================================================
+-- 5. APPOINTMENTS & CLINICAL
+-- =====================================================
+
 CREATE TABLE `appointments` (
   `id` varchar(255) NOT NULL,
   `appointment_no` varchar(100) NOT NULL,
@@ -212,7 +231,10 @@ CREATE TABLE `medical_records` (
   CONSTRAINT `fk_record_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctor_profiles` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 6. Pharmacy & Inventory
+-- =====================================================
+-- 6. PHARMACY & INVENTORY
+-- =====================================================
+
 CREATE TABLE `medicines` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -234,7 +256,7 @@ CREATE TABLE `medicines` (
 
 CREATE TABLE `reservations` (
    `id` varchar(255) NOT NULL PRIMARY KEY
-); -- Placeholder if needed for complex inventory locks
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE `inventory` (
   `id` varchar(255) NOT NULL,
@@ -253,7 +275,52 @@ CREATE TABLE `inventory` (
   CONSTRAINT `fk_inv_branch` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 7. Billing
+-- =====================================================
+-- 7. PRESCRIPTIONS
+-- =====================================================
+
+CREATE TABLE `prescriptions` (
+  `id` varchar(255) NOT NULL,
+  `prescription_no` varchar(100) NOT NULL,
+  `medical_record_id` varchar(255) DEFAULT NULL,
+  `patient_id` varchar(255) NOT NULL,
+  `doctor_id` varchar(255) NOT NULL,
+  `branch_id` varchar(255) DEFAULT NULL,
+  `status` enum('active','partially_dispensed','fully_dispensed','expired','cancelled') DEFAULT 'active',
+  `valid_until` date DEFAULT NULL,
+  `notes` text,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `prescription_no` (`prescription_no`),
+  KEY `patient_id` (`patient_id`),
+  KEY `doctor_id` (`doctor_id`),
+  CONSTRAINT `fk_rx_patient` FOREIGN KEY (`patient_id`) REFERENCES `patient_profiles` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_rx_doctor` FOREIGN KEY (`doctor_id`) REFERENCES `doctor_profiles` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE `prescription_items` (
+  `id` varchar(255) NOT NULL,
+  `prescription_id` varchar(255) NOT NULL,
+  `medicine_id` varchar(255) DEFAULT NULL,
+  `medicine_name` varchar(255) NOT NULL,
+  `dosage` varchar(100) DEFAULT NULL,
+  `frequency` varchar(100) DEFAULT NULL,
+  `duration` varchar(100) DEFAULT NULL,
+  `quantity` int DEFAULT NULL,
+  `instructions` text,
+  `dispense_status` enum('pending','partial','complete') DEFAULT 'pending',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `prescription_id` (`prescription_id`),
+  CONSTRAINT `fk_rxitem_rx` FOREIGN KEY (`prescription_id`) REFERENCES `prescriptions` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- =====================================================
+-- 8. BILLING
+-- =====================================================
+
 CREATE TABLE `bills` (
   `id` varchar(255) NOT NULL,
   `bill_no` varchar(100) NOT NULL,
@@ -273,6 +340,20 @@ CREATE TABLE `bills` (
   CONSTRAINT `fk_bill_patient` FOREIGN KEY (`patient_id`) REFERENCES `patient_profiles` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `bill_items` (
+  `id` varchar(255) NOT NULL,
+  `bill_id` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `item_type` enum('consultation','lab_test','medicine','room','procedure','other') DEFAULT 'other',
+  `quantity` int DEFAULT 1,
+  `unit_price` float DEFAULT 0,
+  `amount` float DEFAULT 0,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `bill_id` (`bill_id`),
+  CONSTRAINT `fk_billitem_bill` FOREIGN KEY (`bill_id`) REFERENCES `bills` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE `payments` (
   `id` varchar(255) NOT NULL,
   `bill_id` varchar(255) NOT NULL,
@@ -289,7 +370,10 @@ CREATE TABLE `payments` (
   CONSTRAINT `fk_payment_bill` FOREIGN KEY (`bill_id`) REFERENCES `bills` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 8. Lab Tests
+-- =====================================================
+-- 9. LAB TESTS
+-- =====================================================
+
 CREATE TABLE `lab_test_types` (
   `id` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -309,6 +393,7 @@ CREATE TABLE `lab_tests` (
   `doctor_id` varchar(255) DEFAULT NULL,
   `test_type_id` varchar(255) NOT NULL,
   `branch_id` varchar(255) DEFAULT NULL,
+  `priority` varchar(20) DEFAULT 'routine',
   `status` varchar(50) DEFAULT 'ordered',
   `result` text,
   `report_url` varchar(500) DEFAULT NULL,
