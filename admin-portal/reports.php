@@ -182,10 +182,10 @@ include '../includes/sidebar_admin.php';
         <div class="card">
             <div class="card-header"><h3 class="card-title">Export Reports</h3></div>
             <div class="flex gap-2" style="padding: 16px;">
-                <button class="btn btn-outline">📊 Daily Summary (PDF)</button>
-                <button class="btn btn-outline">📈 Monthly Revenue (Excel)</button>
-                <button class="btn btn-outline">👥 Patient List (CSV)</button>
-                <button class="btn btn-outline">📅 Appointment Log (CSV)</button>
+                <a href="export_reports.php?type=daily_summary&format=pdf" target="_blank" class="btn btn-outline">📊 Daily Summary (PDF)</a>
+                <a href="export_reports.php?type=revenue&format=csv" class="btn btn-outline">📈 Monthly Revenue (CSV)</a>
+                <a href="export_reports.php?type=patients&format=csv" class="btn btn-outline">👥 Patient List (CSV)</a>
+                <a href="export_reports.php?type=appointments&format=csv" class="btn btn-outline">📅 Appointment Log (CSV)</a>
             </div>
         </div>
 
