@@ -26,6 +26,13 @@ Copy everything of this project folder to: C:\xampp\htdocs\stgeorgehospital
 3. Choose file: `database/schema.sql`
 4. Click **Go**
 
+### Step 3.5: Run Migrations
+Open your browser and visit:
+```
+http://localhost/stgeorgehospital/database/run_migrations.php
+```
+This will add necessary columns and updates to your database.
+
 ### Step 4: Seed Test Data
 Open your browser and visit:
 ```
@@ -151,6 +158,7 @@ zt_noob_stHfrontend/
 ├── includes/          # Shared components (header, sidebar, navbar)
 ├── database/
 │   ├── schema.sql     # Database schema
+│   ├── run_migrations.php # Automated migration runner
 │   └── seeds/
 │       └── seed1.php  # Seed script
 ├── scripts/
