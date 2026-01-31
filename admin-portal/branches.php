@@ -38,6 +38,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_branch'])) {
     }
 }
 
+// Handle Update Branch
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_branch'])) {
+    $id = $_POST['branch_id'];
+    $name = trim($_POST['name']);
+    $code = trim($_POST['code']);
+    $address = trim($_POST['address']);
+    $city = trim($_POST['city']);
+    $state = trim($_POST['state']);
+    $phone = trim($_POST['phone']);
+    $email = trim($_POST['email']);
+
+    if (empty($name) || empty($code) || empty($address)) {
+        $error = "Please fill in all required fields.";
+    } else {
+        try {
+            $stmt = $pdo->prepare("UPDATE branches SET name = ?, code = ?, address = ?, city = ?, state = ?, phone = ?, email = ? WHERE id = ?");
+            $stmt->execute([$name, $code, $address, $city, $state, $phone, $email, $id]);
+            $message = "Branch updated successfully!";
+        } catch (PDOException $e) {
+            if (strpos($e->getMessage(), 'Duplicate') !== false) {
+                $error = "Branch code already exists.";
+            } else {
+                $error = "Error: " . $e->getMessage();
+            }
+        }
+    }
+}
+
+// Handle Restore
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_branch'])) {
+    $id = $_POST['branch_id'];
+    try {
+        $stmt = $pdo->prepare("UPDATE branches SET is_active = 1, deleted_at = NULL WHERE id = ?");
+        $stmt->execute([$id]);
+        $message = "Branch restored successfully!";
+    } catch (PDOException $e) {
+        $error = "Error: " . $e->getMessage();
+    }
+}
+
 // Handle Delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_branch'])) {
     $id = $_POST['branch_id'];
@@ -50,8 +90,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_branch'])) {
     }
 }
 
+// Get deactivation filter
+$show_deactivated = isset($_GET['show_deactivated']) && $_GET['show_deactivated'] == 1;
+
 // Fetch branches
-$branches = $pdo->query("SELECT * FROM branches WHERE is_active = 1 ORDER BY name")->fetchAll();
+$query = "SELECT * FROM branches " . ($show_deactivated ? "WHERE is_active = 0" : "WHERE is_active = 1") . " ORDER BY name";
+$branches = $pdo->query($query)->fetchAll();
 
 include '../includes/header.php';
 include '../includes/sidebar_admin.php';
@@ -66,7 +110,12 @@ include '../includes/sidebar_admin.php';
                 <h1 class="page-title">Branch Management</h1>
                 <p class="page-subtitle">Manage hospital branches and locations</p>
             </div>
-            <button class="btn btn-primary" onclick="toggleModal('addBranchModal')">+ Add New Branch</button>
+            <div class="flex gap-2">
+                <a href="?show_deactivated=<?php echo $show_deactivated ? '0' : '1'; ?>" class="btn btn-outline">
+                    <?php echo $show_deactivated ? 'View Active Branches' : 'View Deactivated'; ?>
+                </a>
+                <button class="btn btn-primary" onclick="toggleModal('addBranchModal')">+ Add New Branch</button>
+            </div>
         </div>
 
         <?php if ($message): ?>
@@ -98,14 +147,32 @@ include '../includes/sidebar_admin.php';
                             <td><?php echo h($b['address']); ?></td>
                             <td><?php echo h($b['city']); ?>, <?php echo h($b['state']); ?></td>
                             <td><?php echo h($b['phone']); ?></td>
-                            <td><span class="badge badge-green">Active</span></td>
+                            <td><span class="badge <?php echo $b['is_active'] ? 'badge-green' : 'badge-red'; ?>">
+                                <?php echo $b['is_active'] ? 'Active' : 'Deactivated'; ?>
+                            </span></td>
                             <td>
-                                <button class="btn btn-sm btn-outline">Edit</button>
-                                <form method="POST" style="display:inline;" onsubmit="return confirm('Deactivate this branch?');">
-                                    <input type="hidden" name="delete_branch" value="1">
-                                    <input type="hidden" name="branch_id" value="<?php echo $b['id']; ?>">
-                                    <button type="submit" class="btn btn-sm btn-outline" style="color: #dc2626;">Deactivate</button>
-                                </form>
+                                <?php if ($b['is_active']): ?>
+                                    <button class="btn btn-sm btn-outline" onclick="openEditModal(this)"
+                                        data-id="<?php echo h($b['id']); ?>"
+                                        data-name="<?php echo h($b['name']); ?>"
+                                        data-code="<?php echo h($b['code']); ?>"
+                                        data-address="<?php echo h($b['address']); ?>"
+                                        data-city="<?php echo h($b['city']); ?>"
+                                        data-state="<?php echo h($b['state']); ?>"
+                                        data-phone="<?php echo h($b['phone']); ?>"
+                                        data-email="<?php echo h($b['email']); ?>">Edit</button>
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Deactivate this branch?');">
+                                        <input type="hidden" name="delete_branch" value="1">
+                                        <input type="hidden" name="branch_id" value="<?php echo $b['id']; ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline" style="color: #dc2626; border-color: #dc2626;">Deactivate</button>
+                                    </form>
+                                <?php else: ?>
+                                    <form method="POST" style="display:inline;" onsubmit="return confirm('Restore this branch?');">
+                                        <input type="hidden" name="restore_branch" value="1">
+                                        <input type="hidden" name="branch_id" value="<?php echo $b['id']; ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline" style="color: #059669; border-color: #059669;">Restore</button>
+                                    </form>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -164,6 +231,56 @@ include '../includes/sidebar_admin.php';
             </form>
         </div>
 
+        </div>
+
+        <!-- Edit Branch Modal -->
+        <div id="editBranchModal" class="card" style="display: none; border: 2px solid #22c55e;">
+            <div class="card-header">
+                <h3 class="card-title">Edit Branch</h3>
+                <button class="btn btn-sm btn-outline" onclick="toggleModal('editBranchModal')">Close</button>
+            </div>
+            <form method="POST">
+                <input type="hidden" name="update_branch" value="1">
+                <input type="hidden" name="branch_id" id="edit_branch_id">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Branch Name *</label>
+                        <input type="text" name="name" id="edit_name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Branch Code *</label>
+                        <input type="text" name="code" id="edit_code" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Address *</label>
+                    <input type="text" name="address" id="edit_address" class="form-input" required>
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" id="edit_city" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">State</label>
+                        <input type="text" name="state" id="edit_state" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" name="phone" id="edit_phone" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" id="edit_email" class="form-input">
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <button type="button" class="btn btn-outline" onclick="toggleModal('editBranchModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+
     </main>
 </div>
 
@@ -171,6 +288,24 @@ include '../includes/sidebar_admin.php';
 function toggleModal(id) {
     var el = document.getElementById(id);
     el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    if (el.style.display === 'block') {
+        el.scrollIntoView({ behavior: "smooth" });
+    }
+}
+
+function openEditModal(btn) {
+    document.getElementById('edit_branch_id').value = btn.dataset.id;
+    document.getElementById('edit_name').value = btn.dataset.name;
+    document.getElementById('edit_code').value = btn.dataset.code;
+    document.getElementById('edit_address').value = btn.dataset.address;
+    document.getElementById('edit_city').value = btn.dataset.city || '';
+    document.getElementById('edit_state').value = btn.dataset.state || '';
+    document.getElementById('edit_phone').value = btn.dataset.phone || '';
+    document.getElementById('edit_email').value = btn.dataset.email || '';
+
+    var modal = document.getElementById('editBranchModal');
+    modal.style.display = 'block';
+    modal.scrollIntoView({ behavior: "smooth" });
 }
 </script>
 

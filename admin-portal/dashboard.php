@@ -159,7 +159,6 @@ include '../includes/sidebar_admin.php';
                     <a href="users.php" class="quick-action-btn">➕ Add New User</a>
                     <a href="doctors.php" class="quick-action-btn">➕ Add New Doctor</a>
                     <a href="branches.php" class="quick-action-btn">➕ Add New Branch</a>
-                    <a href="services.php" class="quick-action-btn">⚙️ System Settings</a>
                 </div>
             </div>
             <div class="card">
