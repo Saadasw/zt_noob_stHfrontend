@@ -10,6 +10,9 @@ if (isset($_SESSION['user_id'])) {
         case 'admin':
             header("Location: ../admin-portal/dashboard.php");
             break;
+        case 'branch_admin':
+            header("Location: ../branch-admin-portal/dashboard.php");
+            break;
         case 'doctor':
             header("Location: ../doctor-portal/dashboard.php");
             break;
@@ -51,10 +54,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
 
+            // If branch_admin, fetch branch_id
+            if ($user['role'] === 'branch_admin') {
+                $stmt = $pdo->prepare("SELECT branch_id FROM branch_admin_profiles WHERE user_id = ?");
+                $stmt->execute([$user['id']]);
+                $baProfile = $stmt->fetch();
+                if ($baProfile) {
+                    $_SESSION['branch_admin_branch_id'] = $baProfile['branch_id'];
+                }
+            }
+
             // Redirect based on role
             switch ($user['role']) {
                 case 'admin':
                     header("Location: ../admin-portal/dashboard.php");
+                    break;
+                case 'branch_admin':
+                    header("Location: ../branch-admin-portal/dashboard.php");
                     break;
                 case 'doctor':
                     header("Location: ../doctor-portal/dashboard.php");

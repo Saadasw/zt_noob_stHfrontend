@@ -7,8 +7,71 @@ $page_title = 'My Profile - St. George Hospital';
 $page_css = 'css/doctor-portal.css';
 $current_page = 'profile';
 
+$message = '';
+$error = '';
+
+// Get doctor profile data
+$stmt = $pdo->prepare("
+    SELECT dp.*, u.name, u.email, u.phone, b.name as branch_name 
+    FROM doctor_profiles dp 
+    JOIN users u ON dp.user_id = u.id 
+    LEFT JOIN branches b ON dp.branch_id = b.id
+    WHERE dp.user_id = ?
+");
+$stmt->execute([$_SESSION['user_id']]);
+$doctor = $stmt->fetch();
+
+// Get working hours from doctor_weekly_schedules
+$weekly_schedule = [];
+if ($doctor) {
+    $stmt = $pdo->prepare("SELECT * FROM doctor_weekly_schedules WHERE doctor_id = ? ORDER BY day_of_week");
+    $stmt->execute([$doctor['id']]);
+    $schedule_rows = $stmt->fetchAll();
+    foreach ($schedule_rows as $row) {
+        $weekly_schedule[$row['day_of_week']] = $row;
+    }
+}
+
+// Handle Password Update
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_password'])) {
+    $current_password = $_POST['current_password'];
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    // Validation
+    if (empty($current_password) || empty($new_password) || empty($confirm_password)) {
+        $error = "Please fill in all password fields.";
+    } elseif ($new_password !== $confirm_password) {
+        $error = "New password and confirmation do not match.";
+    } elseif (strlen($new_password) < 3) {
+        $error = "New password must be at least 3 characters.";
+    } else {
+        // Verify current password
+        $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $user = $stmt->fetch();
+
+        if (!password_verify($current_password, $user['password'])) {
+            $error = "Current password is incorrect.";
+        } else {
+            // Update password
+            try {
+                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+                $stmt->execute([$hashed_password, $_SESSION['user_id']]);
+                $message = "Password updated successfully!";
+            } catch (PDOException $e) {
+                $error = "Error updating password: " . $e->getMessage();
+            }
+        }
+    }
+}
+
 include '../includes/header.php';
 include '../includes/sidebar_doctor.php';
+
+// Day names helper
+$day_names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 ?>
 
 <div class="main-content">
@@ -20,17 +83,25 @@ include '../includes/sidebar_doctor.php';
                 <h1 class="page-title">My Profile</h1>
                 <p class="page-subtitle">View and update your profile information</p>
             </div>
-            <button class="btn btn-outline">Edit</button>
         </div>
+
+        <?php if ($message): ?>
+            <div class="alert alert-success"><?php echo h($message); ?></div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+            <div class="alert alert-danger"><?php echo h($error); ?></div>
+        <?php endif; ?>
 
         <div class="card">
             <div class="flex gap-4 items-center mb-4">
                 <div
                     style="width: 80px; height: 80px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: bold;">
-                    <?php echo strtoupper(substr($_SESSION['user_name'], 0, 2)); ?></div>
+                    <?php echo strtoupper(substr($_SESSION['user_name'], 0, 2)); ?>
+                </div>
                 <div>
                     <h2 style="font-size: 20px;"><?php echo h($_SESSION['user_name']); ?></h2>
-                    <p class="text-gray"><?php echo isset($_SESSION['user_role']) ? ucfirst(h($_SESSION['user_role'])) : 'Doctor'; ?> | Melbourne CBD Branch</p>
+                    <p class="text-gray"><?php echo ucfirst(h($_SESSION['user_role'])); ?> |
+                        <?php echo h($doctor['branch_name'] ?? 'N/A'); ?></p>
                     <p class="text-sm text-gray">Employee ID: <?php echo h($_SESSION['user_id']); ?></p>
                 </div>
             </div>
@@ -41,17 +112,29 @@ include '../includes/sidebar_doctor.php';
                 <h3 class="card-title">Professional Information</h3>
             </div>
             <div class="profile-grid">
-                <div class="profile-item"><label>Medical License</label>
-                    <p>MED-VIC-12345</p>
+                <div class="profile-item">
+                    <label>Medical License</label>
+                    <p><?php echo h($doctor['license_number'] ?? 'N/A'); ?></p>
                 </div>
-                <div class="profile-item"><label>License Expiry</label>
-                    <p>30 June 2026</p>
+                <div class="profile-item">
+                    <label>Email</label>
+                    <p><?php echo h($doctor['email'] ?? 'N/A'); ?></p>
                 </div>
-                <div class="profile-item"><label>Specialization</label>
-                    <p>General Practice / Family Medicine</p>
+                <div class="profile-item">
+                    <label>Specialization</label>
+                    <p><?php echo h($doctor['specialization'] ?? 'N/A'); ?></p>
                 </div>
-                <div class="profile-item"><label>Experience</label>
-                    <p>15 years</p>
+                <div class="profile-item">
+                    <label>Consultation Fee</label>
+                    <p>$<?php echo number_format($doctor['consultation_fee'] ?? 0, 2); ?></p>
+                </div>
+                <div class="profile-item">
+                    <label>Phone</label>
+                    <p><?php echo h($doctor['phone'] ?? 'N/A'); ?></p>
+                </div>
+                <div class="profile-item">
+                    <label>Slot Duration</label>
+                    <p><?php echo ($doctor['slot_duration'] ?? 30); ?> minutes</p>
                 </div>
             </div>
         </div>
@@ -60,49 +143,70 @@ include '../includes/sidebar_doctor.php';
             <div class="card-header">
                 <h3 class="card-title">Working Hours</h3>
             </div>
-            <div class="profile-grid">
-                <div class="profile-item"><label>Monday</label>
-                    <p>09:00 AM - 05:00 PM</p>
+            <?php if (empty($weekly_schedule)): ?>
+                <p class="text-gray">No schedule configured. Please contact administrator.</p>
+            <?php else: ?>
+                <div class="profile-grid">
+                    <?php for ($i = 0; $i <= 6; $i++): ?>
+                        <div class="profile-item">
+                            <label><?php echo $day_names[$i]; ?></label>
+                            <?php if (isset($weekly_schedule[$i]) && $weekly_schedule[$i]['is_active']): ?>
+                                <p><?php echo date('h:i A', strtotime($weekly_schedule[$i]['start_time'])); ?> -
+                                    <?php echo date('h:i A', strtotime($weekly_schedule[$i]['end_time'])); ?></p>
+                            <?php else: ?>
+                                <p class="text-gray">Day Off</p>
+                            <?php endif; ?>
+                        </div>
+                    <?php endfor; ?>
                 </div>
-                <div class="profile-item"><label>Tuesday</label>
-                    <p>09:00 AM - 05:00 PM</p>
-                </div>
-                <div class="profile-item"><label>Wednesday</label>
-                    <p>Day Off</p>
-                </div>
-                <div class="profile-item"><label>Thursday</label>
-                    <p>09:00 AM - 05:00 PM</p>
-                </div>
-                <div class="profile-item"><label>Friday</label>
-                    <p>09:00 AM - 05:00 PM</p>
-                </div>
-                <div class="profile-item"><label>Saturday</label>
-                    <p>Day Off</p>
-                </div>
-            </div>
+            <?php endif; ?>
         </div>
 
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Change Password</h3>
             </div>
-            <form style="max-width: 400px;">
+            <form method="POST" style="max-width: 400px;">
+                <input type="hidden" name="update_password" value="1">
                 <div class="form-group">
-                    <label class="form-label">Current Password</label>
-                    <input type="password" class="form-input" placeholder="Enter current password">
+                    <label class="form-label">Current Password *</label>
+                    <input type="password" name="current_password" class="form-input"
+                        placeholder="Enter current password" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">New Password</label>
-                    <input type="password" class="form-input" placeholder="Enter new password">
+                    <label class="form-label">New Password *</label>
+                    <input type="password" name="new_password" class="form-input" placeholder="Enter new password"
+                        required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Confirm Password</label>
-                    <input type="password" class="form-input" placeholder="Confirm new password">
+                    <label class="form-label">Confirm Password *</label>
+                    <input type="password" name="confirm_password" class="form-input" placeholder="Confirm new password"
+                        required>
                 </div>
-                <button class="btn btn-primary">Update Password</button>
+                <button type="submit" class="btn btn-primary">Update Password</button>
             </form>
         </div>
     </main>
 </div>
+
+<style>
+    .alert {
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+</style>
 
 <?php include '../includes/footer.php'; ?>

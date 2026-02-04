@@ -1,6 +1,7 @@
 <?php
 require '../includes/auth_session.php';
 require '../config/db_connect.php';
+require '../includes/billing_helper.php';
 require_role(['staff']);
 
 $page_title = 'Laboratory - St. George Hospital';
@@ -17,15 +18,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
     $result = trim($_POST['result'] ?? '');
 
     try {
+        $pdo->beginTransaction();
+
         if ($new_status === 'completed' && !empty($result)) {
+            // Update test status
             $stmt = $pdo->prepare("UPDATE lab_tests SET status = ?, result = ?, completed_at = NOW() WHERE id = ?");
             $stmt->execute([$new_status, $result, $test_id]);
+
+            // Auto-billing: Check if not already billed
+            if (!isLabTestBilled($pdo, $test_id)) {
+                // Get test details for billing
+                $stmt = $pdo->prepare("
+                    SELECT lt.*, ltt.name as test_name, ltt.price as test_price, lt.patient_id, lt.branch_id
+                    FROM lab_tests lt
+                    JOIN lab_test_types ltt ON lt.test_type_id = ltt.id
+                    WHERE lt.id = ?
+                ");
+                $stmt->execute([$test_id]);
+                $test = $stmt->fetch();
+
+                if ($test && $test['test_price'] > 0) {
+                    // Get or create pending bill for patient
+                    $bill = getOrCreatePendingBill($pdo, $test['patient_id'], $test['branch_id'] ?? 'BR-MEL-01');
+
+                    // Add lab test as bill item
+                    $bill_item_id = addBillItem(
+                        $pdo,
+                        $bill['id'],
+                        'Lab Test: ' . $test['test_name'],
+                        'lab_test',
+                        1,
+                        $test['test_price']
+                    );
+
+                    // Mark test as billed
+                    markLabTestBilled($pdo, $test_id, $bill_item_id);
+
+                    $message = "Test completed & billed! Added $" . number_format($test['test_price'], 2) . " to Bill #" . $bill['bill_no'];
+                } else {
+                    $message = "Test completed (no price set for billing).";
+                }
+            } else {
+                $message = "Test completed (already billed).";
+            }
         } else {
             $stmt = $pdo->prepare("UPDATE lab_tests SET status = ? WHERE id = ?");
             $stmt->execute([$new_status, $test_id]);
+            $message = "Test status updated successfully.";
         }
-        $message = "Test status updated successfully.";
+
+        $pdo->commit();
     } catch (PDOException $e) {
+        $pdo->rollBack();
         $error = "Error: " . $e->getMessage();
     }
 }
@@ -90,117 +134,124 @@ include '../includes/sidebar_staff.php';
         </div>
 
         <div id="tab-pending" class="tab-content">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Pending Lab Tests</h3>
-            </div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Priority</th>
-                            <th>Test No</th>
-                            <th>Patient</th>
-                            <th>Test</th>
-                            <th>Ordered By</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($pending as $t): ?>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Pending Lab Tests</h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
                             <tr>
-                                <td>
-                                    <?php if ($t['priority'] === 'stat'): ?>
-                                        <span class="badge badge-red">🚨 STAT</span>
-                                    <?php elseif ($t['priority'] === 'urgent'): ?>
-                                        <span class="badge badge-yellow">⚡ Urgent</span>
-                                    <?php else: ?>
-                                        <span class="badge badge-gray">Routine</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td><strong><?php echo h($t['test_no']); ?></strong></td>
-                                <td><?php echo h($t['patient_name']); ?><br><span
-                                        class="text-sm text-gray"><?php echo h($t['patient_code']); ?></span></td>
-                                <td><?php echo h($t['test_name']); ?></td>
-                                <td><?php echo h($t['doctor_name'] ?? 'N/A'); ?></td>
-                                <td>
-                                    <?php
-                                    $status_badges = [
-                                        'ordered' => '<span class="badge badge-yellow">Ordered</span>',
-                                        'sample_pending' => '<span class="badge badge-yellow">Sample Pending</span>',
-                                        'sample_collected' => '<span class="badge badge-blue">Sample Collected</span>',
-                                        'processing' => '<span class="badge badge-blue">Processing</span>',
-                                    ];
-                                    echo $status_badges[$t['status']] ?? $t['status'];
-                                    ?>
-                                </td>
-                                <td>
-                                    <?php if ($t['status'] === 'ordered'): ?>
-                                        <form method="POST" style="display:inline;">
-                                            <input type="hidden" name="update_status" value="1">
-                                            <input type="hidden" name="test_id" value="<?php echo $t['id']; ?>">
-                                            <input type="hidden" name="new_status" value="sample_collected">
-                                            <button type="submit" class="btn btn-sm btn-primary">🧪 Collect Sample</button>
-                                        </form>
-                                    <?php elseif ($t['status'] === 'sample_collected'): ?>
-                                        <form method="POST" style="display:inline;">
-                                            <input type="hidden" name="update_status" value="1">
-                                            <input type="hidden" name="test_id" value="<?php echo $t['id']; ?>">
-                                            <input type="hidden" name="new_status" value="processing">
-                                            <button type="submit" class="btn btn-sm btn-primary">⚙️ Start Processing</button>
-                                        </form>
-                                    <?php elseif ($t['status'] === 'processing'): ?>
-                                        <button class="btn btn-sm btn-primary"
-                                            onclick="showResultModal('<?php echo $t['id']; ?>', '<?php echo h($t['test_name']); ?>')">📝
-                                            Enter Result</button>
-                                    <?php endif; ?>
-                                </td>
+                                <th>Priority</th>
+                                <th>Test No</th>
+                                <th>Patient</th>
+                                <th>Test</th>
+                                <th>Ordered By</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
-                        <?php endforeach; ?>
-                        <?php if (empty($pending)): ?>
-                            <tr>
-                                <td colspan="7" class="text-center text-gray">No pending tests.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($pending as $t): ?>
+                                <tr>
+                                    <td>
+                                        <?php if ($t['priority'] === 'stat'): ?>
+                                            <span class="badge badge-red">🚨 STAT</span>
+                                        <?php elseif ($t['priority'] === 'urgent'): ?>
+                                            <span class="badge badge-yellow">⚡ Urgent</span>
+                                        <?php else: ?>
+                                            <span class="badge badge-gray">Routine</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><strong><?php echo h($t['test_no']); ?></strong></td>
+                                    <td><?php echo h($t['patient_name']); ?><br><span
+                                            class="text-sm text-gray"><?php echo h($t['patient_code']); ?></span></td>
+                                    <td><?php echo h($t['test_name']); ?></td>
+                                    <td><?php echo h($t['doctor_name'] ?? 'N/A'); ?></td>
+                                    <td>
+                                        <?php
+                                        $status_badges = [
+                                            'ordered' => '<span class="badge badge-yellow">Ordered</span>',
+                                            'sample_pending' => '<span class="badge badge-yellow">Sample Pending</span>',
+                                            'sample_collected' => '<span class="badge badge-blue">Sample Collected</span>',
+                                            'processing' => '<span class="badge badge-blue">Processing</span>',
+                                        ];
+                                        echo $status_badges[$t['status']] ?? $t['status'];
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($t['status'] === 'ordered'): ?>
+                                            <form method="POST" style="display:inline;">
+                                                <input type="hidden" name="update_status" value="1">
+                                                <input type="hidden" name="test_id" value="<?php echo $t['id']; ?>">
+                                                <input type="hidden" name="new_status" value="sample_collected">
+                                                <button type="submit" class="btn btn-sm btn-primary">🧪 Collect Sample</button>
+                                            </form>
+                                        <?php elseif ($t['status'] === 'sample_collected'): ?>
+                                            <form method="POST" style="display:inline;">
+                                                <input type="hidden" name="update_status" value="1">
+                                                <input type="hidden" name="test_id" value="<?php echo $t['id']; ?>">
+                                                <input type="hidden" name="new_status" value="processing">
+                                                <button type="submit" class="btn btn-sm btn-primary">⚙️ Start
+                                                    Processing</button>
+                                            </form>
+                                        <?php elseif ($t['status'] === 'processing'): ?>
+                                            <button class="btn btn-sm btn-primary"
+                                                onclick="showResultModal('<?php echo $t['id']; ?>', '<?php echo h($t['test_name']); ?>')">📝
+                                                Enter Result</button>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (empty($pending)): ?>
+                                <tr>
+                                    <td colspan="7" class="text-center text-gray">No pending tests.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
         </div>
 
         <!-- Completed Tests Tab -->
         <div id="tab-completed" class="tab-content" style="display: none;">
-        <div class="card">
-            <div class="card-header"><h3 class="card-title">Completed Lab Tests</h3></div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Test No</th>
-                            <th>Patient</th>
-                            <th>Test</th>
-                            <th>Result</th>
-                            <th>Completed</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($completed as $t): ?>
-                        <tr>
-                            <td><strong><?php echo h($t['test_no']); ?></strong></td>
-                            <td><?php echo h($t['patient_name']); ?></td>
-                            <td><?php echo h($t['test_name']); ?></td>
-                            <td><?php echo h(substr($t['result'] ?? '', 0, 50)); ?><?php echo strlen($t['result'] ?? '') > 50 ? '...' : ''; ?></td>
-                            <td><?php echo $t['completed_at'] ? date('d M Y H:i', strtotime($t['completed_at'])) : 'N/A'; ?></td>
-                        </tr>
-                        <?php endforeach; ?>
-                        <?php if (empty($completed)): ?>
-                        <tr><td colspan="5" class="text-center text-gray">No completed tests.</td></tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Completed Lab Tests</h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test No</th>
+                                <th>Patient</th>
+                                <th>Test</th>
+                                <th>Result</th>
+                                <th>Completed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($completed as $t): ?>
+                                <tr>
+                                    <td><strong><?php echo h($t['test_no']); ?></strong></td>
+                                    <td><?php echo h($t['patient_name']); ?></td>
+                                    <td><?php echo h($t['test_name']); ?></td>
+                                    <td><?php echo h(substr($t['result'] ?? '', 0, 50)); ?><?php echo strlen($t['result'] ?? '') > 50 ? '...' : ''; ?>
+                                    </td>
+                                    <td><?php echo $t['completed_at'] ? date('d M Y H:i', strtotime($t['completed_at'])) : 'N/A'; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (empty($completed)): ?>
+                                <tr>
+                                    <td colspan="5" class="text-center text-gray">No completed tests.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
         </div>
 
         <!-- Result Entry Modal -->
@@ -239,11 +290,11 @@ include '../includes/sidebar_staff.php';
 <script>
     function switchTab(tabName) {
         // Hide all tab contents
-        document.querySelectorAll('.tab-content').forEach(function(el) {
+        document.querySelectorAll('.tab-content').forEach(function (el) {
             el.style.display = 'none';
         });
         // Remove active from all tabs
-        document.querySelectorAll('.tab').forEach(function(el) {
+        document.querySelectorAll('.tab').forEach(function (el) {
             el.classList.remove('active');
         });
         // Show selected tab content

@@ -18,6 +18,9 @@
             Management</a>
         <a href="staff.php" class="nav-item <?php echo ($current_page == 'staff') ? 'active' : ''; ?>">👤 Staff
             Management</a>
+        <a href="branch-admins.php"
+            class="nav-item <?php echo ($current_page == 'branch-admins') ? 'active' : ''; ?>">🔐 Branch
+            Admins</a>
         <a href="departments.php" class="nav-item <?php echo ($current_page == 'departments') ? 'active' : ''; ?>">🏷️
             Departments</a>
         <a href="services.php" class="nav-item <?php echo ($current_page == 'services') ? 'active' : ''; ?>">💰 Service

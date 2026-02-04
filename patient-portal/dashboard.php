@@ -24,11 +24,15 @@ $stmt = $pdo->prepare("SELECT COUNT(*) FROM appointments WHERE patient_id = ? AN
 $stmt->execute([$patient_profile_id]);
 $upcoming_count = $stmt->fetchColumn();
 
-// Recent Lab Results (placeholder - would need prescriptions/lab_tests tables)
-$lab_results_count = 0;
+// Lab Results Ready (completed or reviewed)
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM lab_tests WHERE patient_id = ? AND status IN ('completed', 'reviewed')");
+$stmt->execute([$patient_profile_id]);
+$lab_results_count = $stmt->fetchColumn();
 
-// Active Prescriptions (placeholder)
-$prescriptions_count = 0;
+// Active Prescriptions
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM prescriptions WHERE patient_id = ? AND status = 'active'");
+$stmt->execute([$patient_profile_id]);
+$prescriptions_count = $stmt->fetchColumn();
 
 // Outstanding Bills
 $stmt = $pdo->prepare("SELECT COALESCE(SUM(due_amount), 0) FROM bills WHERE patient_id = ? AND payment_status IN ('pending', 'partial', 'overdue')");
@@ -89,37 +93,39 @@ include '../includes/sidebar_patient.php';
         </div>
 
         <?php if ($next_appointment): ?>
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">📅 Next Appointment</h3>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📅 Next Appointment</h3>
+                </div>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <label>Date</label>
+                        <p><?php echo date('l, d F Y', strtotime($next_appointment['appointment_date'])); ?></p>
+                    </div>
+                    <div class="profile-item">
+                        <label>Time</label>
+                        <p><?php echo date('h:i A', strtotime($next_appointment['start_time'])); ?></p>
+                    </div>
+                    <div class="profile-item">
+                        <label>Doctor</label>
+                        <p><?php echo h($next_appointment['doctor_name']); ?></p>
+                    </div>
+                    <div class="profile-item">
+                        <label>Department</label>
+                        <p><?php echo h($next_appointment['specialization']); ?></p>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <a href="appointments.php" class="btn btn-primary">View Details</a>
+                    <a href="reschedule.php?apt_id=<?php echo $next_appointment['id']; ?>"
+                        class="btn btn-outline">Reschedule</a>
+                </div>
             </div>
-            <div class="profile-grid">
-                <div class="profile-item">
-                    <label>Date</label>
-                    <p><?php echo date('l, d F Y', strtotime($next_appointment['appointment_date'])); ?></p>
-                </div>
-                <div class="profile-item">
-                    <label>Time</label>
-                    <p><?php echo date('h:i A', strtotime($next_appointment['start_time'])); ?></p>
-                </div>
-                <div class="profile-item">
-                    <label>Doctor</label>
-                    <p><?php echo h($next_appointment['doctor_name']); ?></p>
-                </div>
-                <div class="profile-item">
-                    <label>Department</label>
-                    <p><?php echo h($next_appointment['specialization']); ?></p>
-                </div>
-            </div>
-            <div class="flex gap-2 mt-4">
-                <a href="appointments.php" class="btn btn-primary">View Details</a>
-                <button class="btn btn-outline">Reschedule</button>
-            </div>
-        </div>
         <?php else: ?>
-        <div class="card">
-            <p class="text-center text-gray p-4">No upcoming appointments. <a href="book-appointment.php">Book one now</a>.</p>
-        </div>
+            <div class="card">
+                <p class="text-center text-gray p-4">No upcoming appointments. <a href="book-appointment.php">Book one
+                        now</a>.</p>
+            </div>
         <?php endif; ?>
 
     </main>

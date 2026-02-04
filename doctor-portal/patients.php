@@ -27,7 +27,8 @@ include '../includes/sidebar_doctor.php';
         <div class="card">
             <!-- Filter Bar -->
             <form method="GET" class="flex gap-2 mb-4">
-                <input type="text" name="search" class="form-input" placeholder="🔍 Search by name or ID..." style="width: 250px;" value="<?php echo h($_GET['search'] ?? ''); ?>">
+                <input type="text" name="search" class="form-input" placeholder="🔍 Search by name or ID..."
+                    style="width: 250px;" value="<?php echo h($_GET['search'] ?? ''); ?>">
                 <button type="submit" class="btn btn-sm btn-secondary">Search</button>
             </form>
 
@@ -65,29 +66,32 @@ include '../includes/sidebar_doctor.php';
 
                         if (count($patients) > 0):
                             foreach ($patients as $patient):
-                        ?>
-                        <tr>
-                            <td>
-                                <strong><?php echo h($patient['name']); ?></strong>
-                                <div class="text-sm text-gray"><?php echo h($patient['email']); ?></div>
-                            </td>
-                            <td><?php echo h($patient['patient_id']); ?></td>
-                            <td>
-                                <?php echo h($patient['date_of_birth']); ?> 
-                                <span class="text-sm text-gray">(<?php echo h($patient['gender']); ?>)</span>
-                            </td>
-                            <td>
-                                <?php echo h($patient['emergency_contact_name'] ?? '-'); ?>
-                                <div class="text-sm text-gray"><?php echo h($patient['emergency_contact_phone'] ?? ''); ?></div>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-outline">👁️ View Profile</button>
-                            </td>
-                        </tr>
-                        <?php endforeach; else: ?>
-                        <tr>
-                            <td colspan="5" class="text-center">No patients found.</td>
-                        </tr>
+                                ?>
+                                <tr>
+                                    <td>
+                                        <strong><?php echo h($patient['name']); ?></strong>
+                                        <div class="text-sm text-gray"><?php echo h($patient['email']); ?></div>
+                                    </td>
+                                    <td><?php echo h($patient['patient_id']); ?></td>
+                                    <td>
+                                        <?php echo h($patient['date_of_birth']); ?>
+                                        <span class="text-sm text-gray">(<?php echo h($patient['gender']); ?>)</span>
+                                    </td>
+                                    <td>
+                                        <?php echo h($patient['emergency_contact_name'] ?? '-'); ?>
+                                        <div class="text-sm text-gray">
+                                            <?php echo h($patient['emergency_contact_phone'] ?? ''); ?>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="patient-details.php?id=<?php echo h($patient['id']); ?>"
+                                            class="btn btn-sm btn-outline">👁️ View Profile</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; else: ?>
+                            <tr>
+                                <td colspan="5" class="text-center">No patients found.</td>
+                            </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>

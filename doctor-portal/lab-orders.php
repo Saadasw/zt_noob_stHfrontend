@@ -66,17 +66,39 @@ $patients_list = $pdo->query("SELECT pp.id, pp.patient_id, u.name FROM patient_p
 
 // Fetch recent orders by this doctor
 $recent_orders = $pdo->prepare("
-    SELECT lt.*, ltt.name as test_name, u.name as patient_name, pp.patient_id as patient_code
+    SELECT lt.*, ltt.name as test_name, ltt.code as test_code, u.name as patient_name, pp.patient_id as patient_code,
+           u_doc.name as doctor_name
     FROM lab_tests lt
     JOIN lab_test_types ltt ON lt.test_type_id = ltt.id
     JOIN patient_profiles pp ON lt.patient_id = pp.id
     JOIN users u ON pp.user_id = u.id
+    LEFT JOIN doctor_profiles dp ON lt.doctor_id = dp.id
+    LEFT JOIN users u_doc ON dp.user_id = u_doc.id
     WHERE lt.doctor_id = ?
     ORDER BY lt.created_at DESC
     LIMIT 20
 ");
 $recent_orders->execute([$doctor_id]);
 $orders = $recent_orders->fetchAll();
+
+// Handle viewing specific result
+$view_test = null;
+if (isset($_GET['view_result'])) {
+    $stmt = $pdo->prepare("
+        SELECT lt.*, ltt.name as test_name, ltt.code as test_code, ltt.category as test_category,
+               u.name as patient_name, pp.patient_id as patient_code,
+               u_doc.name as doctor_name, dp.specialization
+        FROM lab_tests lt
+        JOIN lab_test_types ltt ON lt.test_type_id = ltt.id
+        JOIN patient_profiles pp ON lt.patient_id = pp.id
+        JOIN users u ON pp.user_id = u.id
+        LEFT JOIN doctor_profiles dp ON lt.doctor_id = dp.id
+        LEFT JOIN users u_doc ON dp.user_id = u_doc.id
+        WHERE lt.id = ?
+    ");
+    $stmt->execute([$_GET['view_result']]);
+    $view_test = $stmt->fetch();
+}
 
 include '../includes/header.php';
 include '../includes/sidebar_doctor.php';
@@ -184,6 +206,7 @@ include '../includes/sidebar_doctor.php';
                                 <th>Test No</th>
                                 <th>Patient</th>
                                 <th>Test</th>
+                                <th>Priority</th>
                                 <th>Status</th>
                                 <th>Ordered</th>
                                 <th>Action</th>
@@ -197,29 +220,37 @@ include '../includes/sidebar_doctor.php';
                                     <td><?php echo h($o['test_name']); ?></td>
                                     <td>
                                         <?php
+                                        $priority_badges = [
+                                            'routine' => '<span class="badge badge-gray">Routine</span>',
+                                            'urgent' => '<span class="badge badge-yellow">Urgent</span>',
+                                            'stat' => '<span class="badge badge-red">STAT</span>',
+                                        ];
+                                        echo $priority_badges[$o['priority']] ?? $o['priority'];
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
                                         $status_badges = [
                                             'ordered' => '<span class="badge badge-yellow">Ordered</span>',
                                             'sample_pending' => '<span class="badge badge-yellow">Sample Pending</span>',
                                             'sample_collected' => '<span class="badge badge-blue">Collected</span>',
                                             'processing' => '<span class="badge badge-blue">Processing</span>',
                                             'completed' => '<span class="badge badge-green">Completed</span>',
+                                            'reviewed' => '<span class="badge badge-green">Reviewed</span>',
                                         ];
                                         echo $status_badges[$o['status']] ?? $o['status'];
                                         ?>
                                     </td>
                                     <td><?php echo date('d M Y', strtotime($o['created_at'])); ?></td>
                                     <td>
-                                        <?php if ($o['status'] === 'completed'): ?>
-                                            <button class="btn btn-sm btn-primary">View Result</button>
-                                        <?php else: ?>
-                                            <button class="btn btn-sm btn-outline">Track</button>
-                                        <?php endif; ?>
+                                        <a href="?view_result=<?php echo $o['id']; ?>#result-modal"
+                                            class="btn btn-sm btn-primary">View Details</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                             <?php if (empty($orders)): ?>
                                 <tr>
-                                    <td colspan="6" class="text-center text-gray">No lab orders yet.</td>
+                                    <td colspan="7" class="text-center text-gray">No lab orders yet.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -231,16 +262,242 @@ include '../includes/sidebar_doctor.php';
     </main>
 </div>
 
+<!-- Lab Result Detail Modal -->
+<?php if ($view_test): ?>
+    <div id="result-modal" class="modal-overlay" style="display: flex;">
+        <div class="modal-card card" style="max-width: 700px;">
+            <div class="card-header">
+                <h3 class="card-title">🔬 Lab Test Details</h3>
+                <a href="lab-orders.php" class="btn btn-sm btn-outline">Close</a>
+            </div>
+
+            <!-- Test Info -->
+            <div class="result-section">
+                <div class="section-header">TEST INFORMATION</div>
+                <div class="grid-2">
+                    <div class="profile-item"><label>Test No</label>
+                        <p><?php echo h($view_test['test_no']); ?></p>
+                    </div>
+                    <div class="profile-item"><label>Test Name</label>
+                        <p><?php echo h($view_test['test_name']); ?></p>
+                    </div>
+                    <div class="profile-item"><label>Category</label>
+                        <p><?php echo h($view_test['test_category'] ?? 'General'); ?></p>
+                    </div>
+                    <div class="profile-item"><label>Priority</label>
+                        <p>
+                            <?php
+                            $priority_badges = [
+                                'routine' => '<span class="badge badge-gray">Routine</span>',
+                                'urgent' => '<span class="badge badge-yellow">Urgent</span>',
+                                'stat' => '<span class="badge badge-red">STAT</span>',
+                            ];
+                            echo $priority_badges[$view_test['priority']] ?? $view_test['priority'];
+                            ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient Info -->
+            <div class="result-section">
+                <div class="section-header">PATIENT</div>
+                <div class="grid-2">
+                    <div class="profile-item"><label>Name</label>
+                        <p><?php echo h($view_test['patient_name']); ?></p>
+                    </div>
+                    <div class="profile-item"><label>Patient ID</label>
+                        <p><?php echo h($view_test['patient_code']); ?></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Timeline -->
+            <div class="result-section">
+                <div class="section-header">STATUS</div>
+                <div class="status-timeline">
+                    <div
+                        class="status-item <?php echo in_array($view_test['status'], ['ordered', 'sample_pending', 'sample_collected', 'processing', 'completed', 'reviewed']) ? 'done' : ''; ?>">
+                        <span class="status-dot"></span>
+                        <span>Ordered</span>
+                        <small><?php echo date('d M Y, h:i A', strtotime($view_test['created_at'])); ?></small>
+                    </div>
+                    <div
+                        class="status-item <?php echo in_array($view_test['status'], ['sample_collected', 'processing', 'completed', 'reviewed']) ? 'done' : ''; ?>">
+                        <span class="status-dot"></span>
+                        <span>Sample Collected</span>
+                    </div>
+                    <div
+                        class="status-item <?php echo in_array($view_test['status'], ['processing', 'completed', 'reviewed']) ? 'done' : ''; ?>">
+                        <span class="status-dot"></span>
+                        <span>Processing</span>
+                    </div>
+                    <div
+                        class="status-item <?php echo in_array($view_test['status'], ['completed', 'reviewed']) ? 'done' : ''; ?>">
+                        <span class="status-dot"></span>
+                        <span>Completed</span>
+                        <?php if ($view_test['completed_at']): ?>
+                            <small><?php echo date('d M Y, h:i A', strtotime($view_test['completed_at'])); ?></small>
+                        <?php endif; ?>
+                    </div>
+                    <div class="status-item <?php echo $view_test['status'] === 'reviewed' ? 'done' : ''; ?>">
+                        <span class="status-dot"></span>
+                        <span>Reviewed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div class="result-section">
+                <div class="section-header">LAB RESULT</div>
+                <?php if (in_array($view_test['status'], ['completed', 'reviewed']) && !empty($view_test['result'])): ?>
+                    <div class="result-box">
+                        <?php echo nl2br(h($view_test['result'])); ?>
+                    </div>
+                <?php elseif (in_array($view_test['status'], ['completed', 'reviewed'])): ?>
+                    <div class="result-box text-gray">Result data not yet entered by lab.</div>
+                <?php else: ?>
+                    <div class="result-box text-gray">⏳ Test not yet completed. Current status:
+                        <?php echo ucfirst($view_test['status']); ?></div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-2 mt-4">
+                <a href="lab-orders.php" class="btn btn-outline">← Back to Orders</a>
+                <?php if ($view_test['status'] === 'completed'): ?>
+                    <a href="lab-results.php?view=<?php echo $view_test['id']; ?>" class="btn btn-primary">Review & Release to
+                        Patient</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+<style>
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-card {
+        max-width: 700px;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+        margin: 0;
+    }
+
+    .result-section {
+        margin-bottom: 20px;
+    }
+
+    .result-box {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 16px;
+        white-space: pre-wrap;
+        font-family: inherit;
+        line-height: 1.6;
+    }
+
+    .status-timeline {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .status-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: #f3f4f6;
+        border-radius: 4px;
+        color: #6b7280;
+    }
+
+    .status-item.done {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #9ca3af;
+    }
+
+    .status-item.done .status-dot {
+        background: #22c55e;
+    }
+
+    .status-item small {
+        font-size: 11px;
+        color: inherit;
+        opacity: 0.7;
+    }
+
+    .badge-gray {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .badge-yellow {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-red {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-blue {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .badge-green {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .alert {
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+    }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .alert-danger {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+</style>
+
 <script>
     function switchTab(tabName) {
-        // Hide all tab contents
         document.getElementById('tab-order').style.display = 'none';
         document.getElementById('tab-myorders').style.display = 'none';
-
-        // Remove active class from all tabs
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
 
-        // Show selected tab and set active
         if (tabName === 'order') {
             document.getElementById('tab-order').style.display = 'block';
             document.querySelectorAll('.tab')[0].classList.add('active');
@@ -249,6 +506,11 @@ include '../includes/sidebar_doctor.php';
             document.querySelectorAll('.tab')[1].classList.add('active');
         }
     }
+
+    // Auto-show My Orders tab if viewing a result
+    <?php if ($view_test): ?>
+        switchTab('myorders');
+    <?php endif; ?>
 </script>
 
 <?php include '../includes/footer.php'; ?>
