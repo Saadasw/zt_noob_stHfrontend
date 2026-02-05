@@ -126,7 +126,7 @@ include '../includes/sidebar_branch_admin.php';
         <div class="page-header">
             <div>
                 <h1 class="page-title">Branch Reports</h1>
-                <p class="page-subtitle">
+                <p class="page-subtitle" data-ai-branch-name="<?php echo h($branch['name'] ?? 'Your Branch'); ?>">
                     <?php echo h($branch['name'] ?? 'Your Branch'); ?> - Performance Overview
                 </p>
             </div>
@@ -152,7 +152,8 @@ include '../includes/sidebar_branch_admin.php';
             <div class="stat-card">
                 <div class="stat-icon" style="background: #dbeafe;">📅</div>
                 <div class="stat-content">
-                    <div class="stat-value">
+                    <div class="stat-value" data-ai-context="total_appointments"
+                        data-ai-value="<?php echo $appt_stats['total'] ?? 0; ?>">
                         <?php echo $appt_stats['total'] ?? 0; ?>
                     </div>
                     <div class="stat-label">Appointments</div>
@@ -161,7 +162,8 @@ include '../includes/sidebar_branch_admin.php';
             <div class="stat-card">
                 <div class="stat-icon" style="background: #dcfce7;">💰</div>
                 <div class="stat-content">
-                    <div class="stat-value">$
+                    <div class="stat-value" data-ai-context="revenue_collected"
+                        data-ai-value="$<?php echo number_format($revenue_stats['total_paid'] ?? 0, 0); ?>">$
                         <?php echo number_format($revenue_stats['total_paid'] ?? 0, 0); ?>
                     </div>
                     <div class="stat-label">Revenue Collected</div>
@@ -170,7 +172,8 @@ include '../includes/sidebar_branch_admin.php';
             <div class="stat-card">
                 <div class="stat-icon" style="background: #fef3c7;">🧪</div>
                 <div class="stat-content">
-                    <div class="stat-value">
+                    <div class="stat-value" data-ai-context="lab_tests_completed"
+                        data-ai-value="<?php echo $lab_completed ?? 0; ?>">
                         <?php echo $lab_completed ?? 0; ?>
                     </div>
                     <div class="stat-label">Lab Tests Completed</div>
@@ -179,7 +182,8 @@ include '../includes/sidebar_branch_admin.php';
             <div class="stat-card">
                 <div class="stat-icon" style="background: #f3e8ff;">💊</div>
                 <div class="stat-content">
-                    <div class="stat-value">
+                    <div class="stat-value" data-ai-context="prescriptions_dispensed"
+                        data-ai-value="<?php echo $rx_dispensed ?? 0; ?>">
                         <?php echo $rx_dispensed ?? 0; ?>
                     </div>
                     <div class="stat-label">Prescriptions Dispensed</div>
@@ -199,21 +203,24 @@ include '../includes/sidebar_branch_admin.php';
                     <div style="display: flex; gap: 16px; flex-wrap: wrap;">
                         <div
                             style="flex: 1; text-align: center; padding: 16px; background: #dbeafe; border-radius: 8px;">
-                            <div style="font-size: 24px; font-weight: 600;">
+                            <div style="font-size: 24px; font-weight: 600;" data-ai-context="appointments_scheduled"
+                                data-ai-value="<?php echo $appt_stats['scheduled'] ?? 0; ?>">
                                 <?php echo $appt_stats['scheduled'] ?? 0; ?>
                             </div>
                             <div style="color: #1e40af;">Scheduled</div>
                         </div>
                         <div
                             style="flex: 1; text-align: center; padding: 16px; background: #dcfce7; border-radius: 8px;">
-                            <div style="font-size: 24px; font-weight: 600;">
+                            <div style="font-size: 24px; font-weight: 600;" data-ai-context="appointments_completed"
+                                data-ai-value="<?php echo $appt_stats['completed'] ?? 0; ?>">
                                 <?php echo $appt_stats['completed'] ?? 0; ?>
                             </div>
                             <div style="color: #166534;">Completed</div>
                         </div>
                         <div
                             style="flex: 1; text-align: center; padding: 16px; background: #fee2e2; border-radius: 8px;">
-                            <div style="font-size: 24px; font-weight: 600;">
+                            <div style="font-size: 24px; font-weight: 600;" data-ai-context="appointments_cancelled"
+                                data-ai-value="<?php echo $appt_stats['cancelled'] ?? 0; ?>">
                                 <?php echo $appt_stats['cancelled'] ?? 0; ?>
                             </div>
                             <div style="color: #991b1b;">Cancelled</div>
@@ -231,21 +238,24 @@ include '../includes/sidebar_branch_admin.php';
                     <div style="display: flex; gap: 16px; flex-wrap: wrap;">
                         <div
                             style="flex: 1; text-align: center; padding: 16px; background: #f3f4f6; border-radius: 8px;">
-                            <div style="font-size: 24px; font-weight: 600;">$
+                            <div style="font-size: 24px; font-weight: 600;" data-ai-context="total_billed"
+                                data-ai-value="$<?php echo number_format($revenue_stats['total_billed'] ?? 0, 0); ?>">$
                                 <?php echo number_format($revenue_stats['total_billed'] ?? 0, 0); ?>
                             </div>
                             <div style="color: #6b7280;">Total Billed</div>
                         </div>
                         <div
                             style="flex: 1; text-align: center; padding: 16px; background: #dcfce7; border-radius: 8px;">
-                            <div style="font-size: 24px; font-weight: 600;">$
+                            <div style="font-size: 24px; font-weight: 600;" data-ai-context="total_collected"
+                                data-ai-value="$<?php echo number_format($revenue_stats['total_paid'] ?? 0, 0); ?>">$
                                 <?php echo number_format($revenue_stats['total_paid'] ?? 0, 0); ?>
                             </div>
                             <div style="color: #166534;">Collected</div>
                         </div>
                         <div
                             style="flex: 1; text-align: center; padding: 16px; background: #fef3c7; border-radius: 8px;">
-                            <div style="font-size: 24px; font-weight: 600;">$
+                            <div style="font-size: 24px; font-weight: 600;" data-ai-context="outstanding_amount"
+                                data-ai-value="$<?php echo number_format($revenue_stats['total_due'] ?? 0, 0); ?>">$
                                 <?php echo number_format($revenue_stats['total_due'] ?? 0, 0); ?>
                             </div>
                             <div style="color: #d97706;">Outstanding</div>
@@ -263,14 +273,16 @@ include '../includes/sidebar_branch_admin.php';
                     <div style="display: flex; gap: 16px;">
                         <div
                             style="flex: 1; text-align: center; padding: 16px; background: #dbeafe; border-radius: 8px;">
-                            <div style="font-size: 24px; font-weight: 600;">
+                            <div style="font-size: 24px; font-weight: 600;" data-ai-context="active_doctors"
+                                data-ai-value="<?php echo $doctor_count; ?>">
                                 <?php echo $doctor_count; ?>
                             </div>
                             <div style="color: #1e40af;">Active Doctors</div>
                         </div>
                         <div
                             style="flex: 1; text-align: center; padding: 16px; background: #f3e8ff; border-radius: 8px;">
-                            <div style="font-size: 24px; font-weight: 600;">
+                            <div style="font-size: 24px; font-weight: 600;" data-ai-context="active_staff"
+                                data-ai-value="<?php echo $staff_count; ?>">
                                 <?php echo $staff_count; ?>
                             </div>
                             <div style="color: #7c3aed;">Active Staff</div>
@@ -366,5 +378,34 @@ include '../includes/sidebar_branch_admin.php';
 
     </main>
 </div>
+
+<!-- AI Report Context (hidden JSON for comprehensive AI context) -->
+<script type="application/json" id="ai-report-context">
+<?php
+// Prepare appointments by doctor for AI context
+$doctors_context = [];
+foreach ($appt_by_doctor as $d) {
+    $doctors_context[] = ['name' => 'Dr. ' . $d['doctor_name'], 'appointments' => $d['count']];
+}
+
+echo json_encode([
+    'branch_name' => $branch['name'] ?? 'Unknown Branch',
+    'report_period' => $date_from . ' to ' . $date_to,
+    'total_appointments' => $appt_stats['total'] ?? 0,
+    'appointments_scheduled' => $appt_stats['scheduled'] ?? 0,
+    'appointments_completed' => $appt_stats['completed'] ?? 0,
+    'appointments_cancelled' => $appt_stats['cancelled'] ?? 0,
+    'total_billed' => '$' . number_format($revenue_stats['total_billed'] ?? 0, 0),
+    'revenue_collected' => '$' . number_format($revenue_stats['total_paid'] ?? 0, 0),
+    'outstanding_amount' => '$' . number_format($revenue_stats['total_due'] ?? 0, 0),
+    'active_doctors' => $doctor_count,
+    'active_staff' => $staff_count,
+    'lab_tests_completed' => $lab_completed ?? 0,
+    'prescriptions_dispensed' => $rx_dispensed ?? 0,
+    'appointments_by_doctor' => $doctors_context
+]); ?>
+</script>
+
+<?php include '../includes/ai_chat_widget.php'; ?>
 
 <?php include '../includes/footer.php'; ?>

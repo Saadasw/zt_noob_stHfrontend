@@ -75,25 +75,39 @@ include '../includes/sidebar_admin.php';
             <div class="stat-card">
                 <div class="stat-icon blue">👥</div>
                 <div class="stat-label">Total Patients</div>
-                <div class="stat-value"><?php echo number_format($stats['total_patients']); ?></div>
-                <div class="stat-link">+<?php echo $stats['new_patients_month']; ?> this month</div>
+                <div class="stat-value" data-ai-context="total_patients"
+                    data-ai-value="<?php echo $stats['total_patients']; ?>">
+                    <?php echo number_format($stats['total_patients']); ?></div>
+                <div class="stat-link" data-ai-context="new_patients_this_month"
+                    data-ai-value="<?php echo $stats['new_patients_month']; ?>">
+                    +<?php echo $stats['new_patients_month']; ?> this month</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon green">💰</div>
                 <div class="stat-label">Revenue (This Month)</div>
-                <div class="stat-value">$<?php echo number_format($stats['revenue_month'], 2); ?></div>
-                <div class="stat-link">Today: $<?php echo number_format($stats['revenue_today'], 2); ?></div>
+                <div class="stat-value" data-ai-context="revenue_this_month"
+                    data-ai-value="$<?php echo number_format($stats['revenue_month'], 2); ?>">
+                    $<?php echo number_format($stats['revenue_month'], 2); ?></div>
+                <div class="stat-link" data-ai-context="revenue_today"
+                    data-ai-value="$<?php echo number_format($stats['revenue_today'], 2); ?>">Today:
+                    $<?php echo number_format($stats['revenue_today'], 2); ?></div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon yellow">📅</div>
                 <div class="stat-label">Appointments (This Month)</div>
-                <div class="stat-value"><?php echo $stats['appointments_month']; ?></div>
-                <div class="stat-link"><?php echo $stats['appointments_completed']; ?> completed</div>
+                <div class="stat-value" data-ai-context="appointments_this_month"
+                    data-ai-value="<?php echo $stats['appointments_month']; ?>">
+                    <?php echo $stats['appointments_month']; ?></div>
+                <div class="stat-link" data-ai-context="appointments_completed"
+                    data-ai-value="<?php echo $stats['appointments_completed']; ?>">
+                    <?php echo $stats['appointments_completed']; ?> completed</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon red">💳</div>
                 <div class="stat-label">Outstanding Bills</div>
-                <div class="stat-value">$<?php echo number_format($stats['outstanding'], 2); ?></div>
+                <div class="stat-value" data-ai-context="outstanding_bills"
+                    data-ai-value="$<?php echo number_format($stats['outstanding'], 2); ?>">
+                    $<?php echo number_format($stats['outstanding'], 2); ?></div>
                 <div class="stat-link">Pending collection</div>
             </div>
         </div>
@@ -101,38 +115,52 @@ include '../includes/sidebar_admin.php';
         <div class="grid-2">
             <!-- User Breakdown -->
             <div class="card">
-                <div class="card-header"><h3 class="card-title">Users by Role</h3></div>
+                <div class="card-header">
+                    <h3 class="card-title">Users by Role</h3>
+                </div>
                 <div style="padding: 16px;">
-                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                    <div
+                        style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
                         <span>👨‍⚕️ Doctors</span>
-                        <strong><?php echo $stats['users']['doctor'] ?? 0; ?></strong>
+                        <strong data-ai-context="total_doctors"
+                            data-ai-value="<?php echo $stats['users']['doctor'] ?? 0; ?>"><?php echo $stats['users']['doctor'] ?? 0; ?></strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                    <div
+                        style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
                         <span>👩‍💼 Staff</span>
-                        <strong><?php echo $stats['users']['staff'] ?? 0; ?></strong>
+                        <strong data-ai-context="total_staff"
+                            data-ai-value="<?php echo $stats['users']['staff'] ?? 0; ?>"><?php echo $stats['users']['staff'] ?? 0; ?></strong>
                     </div>
-                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                    <div
+                        style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
                         <span>👤 Patients</span>
-                        <strong><?php echo $stats['users']['patient'] ?? 0; ?></strong>
+                        <strong data-ai-context="total_patient_users"
+                            data-ai-value="<?php echo $stats['users']['patient'] ?? 0; ?>"><?php echo $stats['users']['patient'] ?? 0; ?></strong>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 8px 0;">
                         <span>🔐 Admins</span>
-                        <strong><?php echo $stats['users']['admin'] ?? 0; ?></strong>
+                        <strong data-ai-context="total_admins"
+                            data-ai-value="<?php echo $stats['users']['admin'] ?? 0; ?>"><?php echo $stats['users']['admin'] ?? 0; ?></strong>
                     </div>
                 </div>
             </div>
 
             <!-- Lab Stats -->
             <div class="card">
-                <div class="card-header"><h3 class="card-title">Laboratory</h3></div>
+                <div class="card-header">
+                    <h3 class="card-title">Laboratory</h3>
+                </div>
                 <div style="padding: 16px;">
-                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
+                    <div
+                        style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb;">
                         <span>🔬 Pending Tests</span>
-                        <strong style="color: #f59e0b;"><?php echo $stats['lab_pending']; ?></strong>
+                        <strong style="color: #f59e0b;" data-ai-context="lab_tests_pending"
+                            data-ai-value="<?php echo $stats['lab_pending']; ?>"><?php echo $stats['lab_pending']; ?></strong>
                     </div>
                     <div style="display: flex; justify-content: space-between; padding: 8px 0;">
                         <span>✅ Completed Today</span>
-                        <strong style="color: #22c55e;"><?php echo $stats['lab_completed_today']; ?></strong>
+                        <strong style="color: #22c55e;" data-ai-context="lab_tests_completed_today"
+                            data-ai-value="<?php echo $stats['lab_completed_today']; ?>"><?php echo $stats['lab_completed_today']; ?></strong>
                     </div>
                 </div>
             </div>
@@ -140,7 +168,9 @@ include '../includes/sidebar_admin.php';
 
         <!-- Recent Activity -->
         <div class="card">
-            <div class="card-header"><h3 class="card-title">Recent Appointments</h3></div>
+            <div class="card-header">
+                <h3 class="card-title">Recent Appointments</h3>
+            </div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -154,24 +184,24 @@ include '../includes/sidebar_admin.php';
                     </thead>
                     <tbody>
                         <?php foreach ($recent_appointments as $apt): ?>
-                        <tr>
-                            <td><strong><?php echo h($apt['appointment_no']); ?></strong></td>
-                            <td><?php echo h($apt['patient_name']); ?></td>
-                            <td><?php echo h($apt['doctor_name']); ?></td>
-                            <td><?php echo date('d M Y', strtotime($apt['appointment_date'])); ?></td>
-                            <td>
-                                <?php
-                                $badges = [
-                                    'scheduled' => 'badge-yellow',
-                                    'confirmed' => 'badge-blue',
-                                    'completed' => 'badge-green',
-                                    'cancelled' => 'badge-red',
-                                ];
-                                $class = $badges[$apt['status']] ?? 'badge-gray';
-                                ?>
-                                <span class="badge <?php echo $class; ?>"><?php echo ucfirst($apt['status']); ?></span>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td><strong><?php echo h($apt['appointment_no']); ?></strong></td>
+                                <td><?php echo h($apt['patient_name']); ?></td>
+                                <td><?php echo h($apt['doctor_name']); ?></td>
+                                <td><?php echo date('d M Y', strtotime($apt['appointment_date'])); ?></td>
+                                <td>
+                                    <?php
+                                    $badges = [
+                                        'scheduled' => 'badge-yellow',
+                                        'confirmed' => 'badge-blue',
+                                        'completed' => 'badge-green',
+                                        'cancelled' => 'badge-red',
+                                    ];
+                                    $class = $badges[$apt['status']] ?? 'badge-gray';
+                                    ?>
+                                    <span class="badge <?php echo $class; ?>"><?php echo ucfirst($apt['status']); ?></span>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -180,16 +210,44 @@ include '../includes/sidebar_admin.php';
 
         <!-- Export Options -->
         <div class="card">
-            <div class="card-header"><h3 class="card-title">Export Reports</h3></div>
+            <div class="card-header">
+                <h3 class="card-title">Export Reports</h3>
+            </div>
             <div class="flex gap-2" style="padding: 16px;">
-                <a href="export_reports.php?type=daily_summary&format=pdf" target="_blank" class="btn btn-outline">📊 Daily Summary (PDF)</a>
-                <a href="export_reports.php?type=revenue&format=csv" class="btn btn-outline">📈 Monthly Revenue (CSV)</a>
+                <a href="export_reports.php?type=daily_summary&format=pdf" target="_blank" class="btn btn-outline">📊
+                    Daily Summary (PDF)</a>
+                <a href="export_reports.php?type=revenue&format=csv" class="btn btn-outline">📈 Monthly Revenue
+                    (CSV)</a>
                 <a href="export_reports.php?type=patients&format=csv" class="btn btn-outline">👥 Patient List (CSV)</a>
-                <a href="export_reports.php?type=appointments&format=csv" class="btn btn-outline">📅 Appointment Log (CSV)</a>
+                <a href="export_reports.php?type=appointments&format=csv" class="btn btn-outline">📅 Appointment Log
+                    (CSV)</a>
             </div>
         </div>
 
     </main>
 </div>
+
+<!-- AI Report Context (hidden JSON for comprehensive AI context) -->
+<script type="application/json" id="ai-report-context">
+<?php echo json_encode([
+    'report_period' => date('F Y'),
+    'total_patients' => $stats['total_patients'],
+    'new_patients_this_month' => $stats['new_patients_month'],
+    'revenue_this_month' => '$' . number_format($stats['revenue_month'], 2),
+    'revenue_today' => '$' . number_format($stats['revenue_today'], 2),
+    'outstanding_bills' => '$' . number_format($stats['outstanding'], 2),
+    'appointments_this_month' => $stats['appointments_month'],
+    'appointments_today' => $stats['appointments_today'],
+    'appointments_completed' => $stats['appointments_completed'],
+    'total_doctors' => $stats['users']['doctor'] ?? 0,
+    'total_staff' => $stats['users']['staff'] ?? 0,
+    'total_patient_users' => $stats['users']['patient'] ?? 0,
+    'total_admins' => $stats['users']['admin'] ?? 0,
+    'lab_tests_pending' => $stats['lab_pending'],
+    'lab_tests_completed_today' => $stats['lab_completed_today']
+]); ?>
+</script>
+
+<?php include '../includes/ai_chat_widget.php'; ?>
 
 <?php include '../includes/footer.php'; ?>

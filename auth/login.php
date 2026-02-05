@@ -217,6 +217,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <p style="text-align: center; margin-top: 16px; font-size: 14px; color: #6b7280;">
             Forgot password? Contact IT Support.
         </p>
+        <p style="text-align: center; margin-top: 12px; font-size: 14px; color: #6b7280;">
+            Don't have an account? <a href="register.php"
+                style="color: #2563eb; text-decoration: none; font-weight: 500;">Register as a Patient</a>
+        </p>
     </div>
 </body>
 
