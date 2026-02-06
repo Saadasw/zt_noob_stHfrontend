@@ -190,6 +190,134 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dispense'])) {
     }
 }
 
+// Handle Add Stock
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_stock'])) {
+    $medicine_id = $_POST['medicine_id'];
+    $quantity = intval($_POST['quantity']);
+    $batch = trim($_POST['batch_number'] ?? '');
+    $expiry = !empty($_POST['expiry_date']) ? $_POST['expiry_date'] : null;
+    $staff_branch_id = $_SESSION['staff_branch_id'] ?? 'BR-MEL-01';
+
+    if ($quantity <= 0) {
+        $_SESSION['pharmacy_error'] = "Quantity must be greater than 0.";
+        header("Location: pharmacy.php?tab=inventory");
+        exit;
+    }
+
+    try {
+        $pdo->beginTransaction();
+
+        // Check if inventory record already exists for this medicine+branch
+        $stmt = $pdo->prepare("SELECT id, quantity FROM inventory WHERE medicine_id = ? AND branch_id = ?");
+        $stmt->execute([$medicine_id, $staff_branch_id]);
+        $existing = $stmt->fetch();
+
+        $inventory_id = null;
+        $qty_before = 0;
+
+        if ($existing) {
+            // Update existing
+            $inventory_id = $existing['id'];
+            $qty_before = $existing['quantity'];
+
+            $stmt = $pdo->prepare("UPDATE inventory SET quantity = quantity + ?, batch_number = ?, expiry_date = ?, last_updated = NOW() WHERE id = ?");
+            $stmt->execute([$quantity, $batch, $expiry, $inventory_id]);
+        } else {
+            // Insert new
+            $inventory_id = 'INV-' . strtoupper(bin2hex(random_bytes(6)));
+            $stmt = $pdo->prepare("INSERT INTO inventory (id, medicine_id, branch_id, quantity, batch_number, expiry_date) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$inventory_id, $medicine_id, $staff_branch_id, $quantity, $batch, $expiry]);
+        }
+
+        // Log movement
+        $move_id = 'MOV-' . strtoupper(bin2hex(random_bytes(8)));
+        $stmt = $pdo->prepare("INSERT INTO stock_movements (id, inventory_id, medicine_id, branch_id, movement_type, quantity_change, quantity_before, quantity_after, batch_number, reason, performed_by) VALUES (?, ?, ?, ?, 'add', ?, ?, ?, ?, 'Stock Arrival', ?)");
+        $stmt->execute([
+            $move_id,
+            $inventory_id,
+            $medicine_id,
+            $staff_branch_id,
+            $quantity,
+            $qty_before,
+            $qty_before + $quantity,
+            $batch,
+            $_SESSION['user_id']
+        ]);
+
+        $pdo->commit();
+        $_SESSION['pharmacy_message'] = "Stock added successfully!";
+        header("Location: pharmacy.php?tab=inventory");
+        exit;
+
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        $_SESSION['pharmacy_error'] = "Error adding stock: " . $e->getMessage();
+        header("Location: pharmacy.php?tab=inventory");
+        exit;
+    }
+}
+
+// Handle Edit Stock
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_stock'])) {
+    $inventory_id = $_POST['inventory_id'];
+    $new_quantity = intval($_POST['new_quantity']);
+    $reason = trim($_POST['reason'] ?? 'Manual Adjustment');
+    $staff_branch_id = $_SESSION['staff_branch_id'] ?? 'BR-MEL-01';
+
+    if ($new_quantity < 0) {
+        $_SESSION['pharmacy_error'] = "Quantity cannot be negative.";
+        header("Location: pharmacy.php?tab=inventory");
+        exit;
+    }
+
+    try {
+        $pdo->beginTransaction();
+
+        $stmt = $pdo->prepare("SELECT * FROM inventory WHERE id = ? AND branch_id = ?");
+        $stmt->execute([$inventory_id, $staff_branch_id]);
+        $inv = $stmt->fetch();
+
+        if (!$inv) {
+            throw new Exception("Inventory record not found.");
+        }
+
+        $qty_before = $inv['quantity'];
+        $qty_change = $new_quantity - $qty_before;
+
+        if ($qty_change !== 0) {
+            // Update inventory
+            $stmt = $pdo->prepare("UPDATE inventory SET quantity = ?, last_updated = NOW() WHERE id = ?");
+            $stmt->execute([$new_quantity, $inventory_id]);
+
+            // Log movement
+            $move_id = 'MOV-' . strtoupper(bin2hex(random_bytes(8)));
+            $stmt = $pdo->prepare("INSERT INTO stock_movements (id, inventory_id, medicine_id, branch_id, movement_type, quantity_change, quantity_before, quantity_after, reason, performed_by) VALUES (?, ?, ?, ?, 'adjust', ?, ?, ?, ?, ?)");
+            $stmt->execute([
+                $move_id,
+                $inventory_id,
+                $inv['medicine_id'],
+                $staff_branch_id,
+                $qty_change,
+                $qty_before,
+                $new_quantity,
+                $reason,
+                $_SESSION['user_id']
+            ]);
+        }
+
+        $pdo->commit();
+        $_SESSION['pharmacy_message'] = "Stock updated successfully!";
+        header("Location: pharmacy.php?tab=inventory");
+        exit;
+
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        $_SESSION['pharmacy_error'] = "Error updating stock: " . $e->getMessage();
+        header("Location: pharmacy.php?tab=inventory");
+        exit;
+    }
+}
+
 // Get flash messages from session
 if (isset($_SESSION['pharmacy_message'])) {
     $message = $_SESSION['pharmacy_message'];
@@ -232,6 +360,28 @@ $stmt = $pdo->prepare("
 $stmt->execute([$date_from, $date_to]);
 $dispensed = $stmt->fetchAll();
 
+// Fetch Medicines for Add Stock Dropdown
+$stmt = $pdo->prepare("SELECT id, name, code, dosage_form, strength FROM medicines WHERE is_active = 1 ORDER BY name");
+$stmt->execute();
+$medicines_list = $stmt->fetchAll();
+
+// Fetch Stock Logs
+$log_date_from = $_GET['log_date_from'] ?? date('Y-m-d', strtotime('-30 days'));
+$log_date_to = $_GET['log_date_to'] ?? date('Y-m-d');
+
+$stmt = $pdo->prepare("
+    SELECT sm.*, m.name as medicine_name, u.name as user_name
+    FROM stock_movements sm
+    JOIN medicines m ON sm.medicine_id = m.id
+    LEFT JOIN users u ON sm.performed_by = u.id
+    WHERE sm.branch_id = ?
+    AND DATE(sm.created_at) BETWEEN ? AND ?
+    ORDER BY sm.created_at DESC
+    LIMIT 100
+");
+$stmt->execute([$staff_branch_id, $log_date_from, $log_date_to]);
+$stock_logs = $stmt->fetchAll();
+
 include '../includes/header.php';
 include '../includes/sidebar_staff.php';
 ?>
@@ -254,17 +404,20 @@ include '../includes/sidebar_staff.php';
             <div class="alert alert-danger"><?php echo h($error); ?></div>
         <?php endif; ?>
 
-        <?php $active_tab = isset($_GET['tab']) && $_GET['tab'] === 'history' ? 'history' : 'pending'; ?>
+        <?php $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'pending'; ?>
         <div class="tabs">
             <button class="tab <?php echo $active_tab === 'pending' ? 'active' : ''; ?>"
                 onclick="switchTab('pending')">Pending Prescriptions
                 (<?php echo count($pending); ?>)</button>
             <button class="tab <?php echo $active_tab === 'inventory' ? 'active' : ''; ?>"
                 onclick="switchTab('inventory')">Inventory</button>
-            <button class="tab <?php echo $active_tab === 'history' ? 'active' : ''; ?>"
-                onclick="switchTab('history')">Dispensed History</button>
+            <button class="tab <?php echo $active_tab === 'dispensed_history' ? 'active' : ''; ?>"
+                onclick="switchTab('dispensed_history')">Dispensed History</button>
+            <button class="tab <?php echo $active_tab === 'stock_logs' ? 'active' : ''; ?>"
+                onclick="switchTab('stock_logs')">Stock Logs</button>
         </div>
 
+        <!-- Pending Prescriptions Tab -->
         <div id="tab-pending" class="tab-content"
             style="<?php echo $active_tab !== 'pending' ? 'display: none;' : ''; ?>">
             <div class="card-header">
@@ -328,10 +481,13 @@ include '../includes/sidebar_staff.php';
             <?php endif; ?>
         </div>
 
-        <div id="tab-inventory" class="tab-content" style="display: none;">
+        <!-- Inventory Tab -->
+        <div id="tab-inventory" class="tab-content"
+            style="<?php echo $active_tab !== 'inventory' ? 'display: none;' : ''; ?>">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Medicine Inventory</h3>
+                    <button class="btn btn-sm btn-primary" onclick="openModal('addStockModal')">+ Add Stock</button>
                 </div>
                 <div class="table-container">
                     <table>
@@ -344,6 +500,7 @@ include '../includes/sidebar_staff.php';
                                 <th>Batch</th>
                                 <th>Expiry</th>
                                 <th>Unit Price</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -376,11 +533,17 @@ include '../includes/sidebar_staff.php';
                                         <?php endif; ?>
                                     </td>
                                     <td>$<?php echo number_format($m['unit_price'], 2); ?></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline"
+                                            onclick="openEditModal('<?php echo $m['id']; ?>', '<?php echo $m['quantity']; ?>', '<?php echo h($m['name']); ?>')">
+                                            ✏️ Edit
+                                        </button>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                             <?php if (empty($inventory)): ?>
                                 <tr>
-                                    <td colspan="7" class="text-center text-gray">No medicines in inventory for this branch.
+                                    <td colspan="8" class="text-center text-gray">No medicines in inventory for this branch.
                                     </td>
                                 </tr>
                             <?php endif; ?>
@@ -390,14 +553,15 @@ include '../includes/sidebar_staff.php';
             </div>
         </div>
 
-        <div id="tab-history" class="tab-content"
-            style="<?php echo $active_tab !== 'history' ? 'display: none;' : ''; ?>">
+        <!-- Dispensed History Tab -->
+        <div id="tab-dispensed_history" class="tab-content"
+            style="<?php echo $active_tab !== 'dispensed_history' ? 'display: none;' : ''; ?>">
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">📋 Dispensed History</h3>
                 </div>
                 <form method="GET" style="padding: 16px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-                    <input type="hidden" name="tab" value="history">
+                    <input type="hidden" name="tab" value="dispensed_history">
                     <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                         <div>
                             <label class="form-label">From</label>
@@ -453,23 +617,256 @@ include '../includes/sidebar_staff.php';
             </div>
         </div>
 
+    <!-- Stock Logs Tab -->
+        <div id="tab-stock_logs" class="tab-content"
+            style="<?php echo $active_tab !== 'stock_logs' ? 'display: none;' : ''; ?>">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">📜 Stock Movement Log</h3>
+                </div>
+                <form method="GET" style="padding: 16px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                    <input type="hidden" name="tab" value="stock_logs">
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <div>
+                            <label class="form-label">From</label>
+                            <input type="date" name="log_date_from" class="form-input" value="<?php echo h($log_date_from); ?>">
+                        </div>
+                        <div>
+                            <label class="form-label">To</label>
+                            <input type="date" name="log_date_to" class="form-input" value="<?php echo h($log_date_to); ?>">
+                        </div>
+                        <div style="align-self: flex-end;">
+                            <button type="submit" class="btn btn-primary">🔍 Filter</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Medicine</th>
+                                <th>Type</th>
+                                <th>Change</th>
+                                <th>Before / After</th>
+                                <th>Changed By</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($stock_logs as $log): ?>
+                                    <tr>
+                                        <td><?php echo date('d M Y, h:i A', strtotime($log['created_at'])); ?></td>
+                                        <td><?php echo h($log['medicine_name']); ?></td>
+                                        <td>
+                                            <?php
+                                            $badges = [
+                                                'add' => 'badge-green',
+                                                'dispense' => 'badge-blue',
+                                                'adjust' => 'badge-yellow',
+                                                'expired' => 'badge-red',
+                                                'return' => 'badge-purple'
+                                            ];
+                                            $cls = $badges[$log['movement_type']] ?? 'badge-gray';
+                                            ?>
+                                            <span class="badge <?php echo $cls; ?>"><?php echo ucfirst($log['movement_type']); ?></span>
+                                        </td>
+                                        <td style="font-weight: bold; color: <?php echo $log['quantity_change'] > 0 ? 'green' : 'red'; ?>">
+                                            <?php echo $log['quantity_change'] > 0 ? '+' : ''; ?>    <?php echo $log['quantity_change']; ?>
+                                        </td>
+                                        <td class="text-sm text-gray">
+                                            <?php echo $log['quantity_before']; ?> ➝ <?php echo $log['quantity_after']; ?>
+                                        </td>
+                                        <td><?php echo h($log['user_name'] ?? 'System'); ?></td>
+                                        <td class="text-sm"><?php echo h($log['reason']); ?></td>
+                                    </tr>
+                            <?php endforeach; ?>
+                            <?php if (empty($stock_logs)): ?>
+                                    <tr>
+                                        <td colspan="7" class="text-center text-gray">No stock logs found for this period.</td>
+                                    </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </main>
+</div>
+
+<!-- Modal Styles -->
+<style>
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background: white;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 500px;
+        padding: 24px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .modal-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6b7280;
+    }
+</style>
+
+<!-- Add Stock Modal -->
+<div id="addStockModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Add New Stock</h3>
+            <button class="close-btn" onclick="closeModal('addStockModal')">&times;</button>
+        </div>
+        <form method="POST">
+            <input type="hidden" name="add_stock" value="1">
+            
+            <div class="form-group">
+                <label class="form-label">Medicine</label>
+                <select name="medicine_id" class="form-select" required>
+                    <option value="">Select Medicine</option>
+                    <?php foreach ($medicines_list as $med): ?>
+                            <option value="<?php echo $med['id']; ?>">
+                                <?php echo h($med['name']); ?> (<?php echo h($med['strength']); ?>)
+                            </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Quantity to Add</label>
+                    <input type="number" name="quantity" class="form-input" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Batch Number</label>
+                    <input type="text" name="batch_number" class="form-input" placeholder="Optional">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Expiry Date</label>
+                <input type="date" name="expiry_date" class="form-input">
+            </div>
+
+            <div style="text-align: right; margin-top: 20px;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('addStockModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Add Stock</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Stock Modal -->
+<div id="editStockModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Stock Quantity</h3>
+            <button class="close-btn" onclick="closeModal('editStockModal')">&times;</button>
+        </div>
+        <form method="POST">
+            <input type="hidden" name="edit_stock" value="1">
+            <input type="hidden" name="inventory_id" id="edit_inventory_id">
+            
+            <div class="form-group">
+                <label class="form-label">Medicine</label>
+                <input type="text" id="edit_medicine_name" class="form-input" readonly style="background: #f3f4f6;">
+            </div>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Current Qty</label>
+                    <input type="text" id="edit_current_qty" class="form-input" readonly style="background: #f3f4f6;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New Quantity</label>
+                    <input type="number" name="new_quantity" class="form-input" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Reason for Change</label>
+                <select name="reason" class="form-select" required>
+                    <option value="Manual Adjustment">Manual Adjustment</option>
+                    <option value="Recount Correction">Recount Correction</option>
+                    <option value="Damaged Stock">Damaged Stock</option>
+                    <option value="Expired Stock">Expired Stock</option>
+                    <option value="Returned Stock">Returned Stock</option>
+                </select>
+            </div>
+
+            <div style="text-align: right; margin-top: 20px;">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('editStockModal')">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Stock</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
     function switchTab(tab) {
-        // Hide all tab contents
         document.querySelectorAll('.tab-content').forEach(function (c) {
             c.style.display = 'none';
         });
-        // Remove active from all tabs
         document.querySelectorAll('.tab').forEach(function (t) {
             t.classList.remove('active');
         });
-        // Show selected tab content
         document.getElementById('tab-' + tab).style.display = 'block';
-        // Mark clicked tab as active
-        event.target.classList.add('active');
+        
+        // Find the button that was clicked (based on tab name)
+        const buttons = document.querySelectorAll('.tab');
+        buttons.forEach(btn => {
+            if (btn.getAttribute('onclick').includes(tab)) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    function openModal(id) {
+        document.getElementById(id).style.display = 'flex';
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+
+    function openEditModal(invId, currentQty, medName) {
+        document.getElementById('edit_inventory_id').value = invId;
+        document.getElementById('edit_current_qty').value = currentQty;
+        document.getElementById('edit_medicine_name').value = medName;
+        openModal('editStockModal');
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-overlay')) {
+            event.target.style.display = "none";
+        }
     }
 </script>
 
