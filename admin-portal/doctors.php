@@ -108,35 +108,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_schedule'])) {
     try {
         $pdo->beginTransaction();
 
-        // Update slot_duration in doctor_profiles
-        $stmt = $pdo->prepare("UPDATE doctor_profiles SET slot_duration = ? WHERE id = ?");
-        $stmt->execute([$slot_duration, $doctor_id]);
-
-        // Delete existing weekly schedules for this doctor
-        $stmt = $pdo->prepare("DELETE FROM doctor_weekly_schedules WHERE doctor_id = ?");
+        // CONFLICT DETECTION: check for existing appointments
+        // Fetch all future scheduled/confirmed appointments for this doctor
+        $stmt = $pdo->prepare("
+            SELECT appointment_date, start_time, end_time, appointment_no 
+            FROM appointments 
+            WHERE doctor_id = ? 
+            AND status IN ('scheduled', 'confirmed') 
+            AND appointment_date >= CURRENT_DATE
+        ");
         $stmt->execute([$doctor_id]);
+        $appointments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Insert new weekly schedules
-        for ($i = 0; $i <= 6; $i++) {
-            $is_active = isset($day_active[$i]) ? 1 : 0;
-            if ($is_active && !empty($start_times[$i]) && !empty($end_times[$i])) {
-                $scheduleId = 'SCH-' . bin2hex(random_bytes(4));
-                $stmt = $pdo->prepare("INSERT INTO doctor_weekly_schedules (id, doctor_id, branch_id, day_of_week, start_time, end_time, is_active, slot_duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$scheduleId, $doctor_id, $branch_id, $i, $start_times[$i], $end_times[$i], 1, $slot_duration]);
+        $conflicts = [];
+
+        foreach ($appointments as $appt) {
+            $apptDayOfWeek = date('w', strtotime($appt['appointment_date'])); // 0 (Sun) - 6 (Sat)
+
+            // Check if day is active in NEW schedule
+            $isDayActive = isset($day_active[$apptDayOfWeek]) ? true : false;
+
+            if (!$isDayActive) {
+                // Conflict: Day is now closed, but appointment exists
+                $conflicts[] = "Appt #{$appt['appointment_no']} on {$appt['appointment_date']} (Day is disabled)";
+            } else {
+                // Check times
+                $newStart = $start_times[$apptDayOfWeek];
+                $newEnd = $end_times[$apptDayOfWeek];
+
+                // Appointment must be within new start/end times
+                // Appt Start >= New Start AND Appt End <= New End
+                if ($appt['start_time'] < $newStart || $appt['end_time'] > $newEnd) {
+                    $conflicts[] = "Appt #{$appt['appointment_no']} on {$appt['appointment_date']} ({$appt['start_time']}-{$appt['end_time']}) is outside new hours ($newStart-$newEnd)";
+                }
             }
         }
 
-        // Handle block date if provided
-        if (!empty($_POST['block_date']) && !empty($_POST['block_reason'])) {
-            $block_date = $_POST['block_date'];
-            $block_reason = $_POST['block_reason'];
-            $overrideId = 'OVR-' . bin2hex(random_bytes(4));
-            $stmt = $pdo->prepare("INSERT INTO doctor_schedule_overrides (id, doctor_id, branch_id, date, type, reason) VALUES (?, ?, ?, ?, 'unavailable', ?)");
-            $stmt->execute([$overrideId, $doctor_id, $branch_id, $block_date, $block_reason]);
-        }
+        if (!empty($conflicts)) {
+            // Rollback and show error
+            $pdo->rollBack();
+            $error = "Cannot update schedule. Conflicts with existing appointments:<br>" . implode("<br>", $conflicts);
+        } else {
+            // No conflicts, proceed with update
 
-        $pdo->commit();
-        $message = "Schedule updated successfully!";
+            // Update slot_duration in doctor_profiles
+            $stmt = $pdo->prepare("UPDATE doctor_profiles SET slot_duration = ? WHERE id = ?");
+            $stmt->execute([$slot_duration, $doctor_id]);
+
+            // Delete existing weekly schedules for this doctor
+            $stmt = $pdo->prepare("DELETE FROM doctor_weekly_schedules WHERE doctor_id = ?");
+            $stmt->execute([$doctor_id]);
+
+            // Insert new weekly schedules
+            for ($i = 0; $i <= 6; $i++) {
+                $is_active = isset($day_active[$i]) ? 1 : 0;
+                if ($is_active && !empty($start_times[$i]) && !empty($end_times[$i])) {
+                    $scheduleId = 'SCH-' . bin2hex(random_bytes(4));
+                    $stmt = $pdo->prepare("INSERT INTO doctor_weekly_schedules (id, doctor_id, branch_id, day_of_week, start_time, end_time, is_active, slot_duration) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->execute([$scheduleId, $doctor_id, $branch_id, $i, $start_times[$i], $end_times[$i], 1, $slot_duration]);
+                }
+            }
+
+            // Handle block date if provided
+            if (!empty($_POST['block_date']) && !empty($_POST['block_reason'])) {
+                $block_date = $_POST['block_date'];
+                $block_reason = $_POST['block_reason'];
+                $overrideId = 'OVR-' . bin2hex(random_bytes(4));
+                $stmt = $pdo->prepare("INSERT INTO doctor_schedule_overrides (id, doctor_id, branch_id, date, type, reason) VALUES (?, ?, ?, ?, 'unavailable', ?)");
+                $stmt->execute([$overrideId, $doctor_id, $branch_id, $block_date, $block_reason]);
+            }
+
+            $pdo->commit();
+            $message = "Schedule updated successfully!";
+        }
 
     } catch (PDOException $e) {
         $pdo->rollBack();
@@ -536,7 +580,50 @@ include '../includes/sidebar_admin.php';
         document.getElementById('schedule_doctor_id').value = doctorId;
         document.getElementById('schedule_doctor_name').textContent = doctorName;
         document.getElementById('schedule_branch_id').value = branchId;
-        toggleModal('scheduleModal');
+        
+        // Reset form to defaults
+        document.querySelectorAll('input[name^="day_active"]').forEach(el => el.checked = false);
+        document.querySelectorAll('input[name^="start_time"]').forEach(el => el.value = "09:00");
+        document.querySelectorAll('input[name^="end_time"]').forEach(el => el.value = "17:00");
+
+        // Fetch existing schedule
+        fetch(`get_doctor_schedule.php?doctor_id=${doctorId}`)
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    // Set slot duration
+                    const slotSelect = document.querySelector('select[name="slot_duration"]');
+                    if(slotSelect) slotSelect.value = data.slot_duration;
+
+                    // Set daily schedules
+                    if(data.schedule && data.schedule.length > 0) {
+                        data.schedule.forEach(day => {
+                            const dayIndex = day.day_of_week;
+                            // Check active
+                            const activeCheck = document.querySelector(`input[name="day_active[${dayIndex}]"]`);
+                            if(activeCheck) activeCheck.checked = true;
+
+                            // Set times
+                            const startInput = document.querySelector(`input[name="start_time[${dayIndex}]"]`);
+                            if(startInput) startInput.value = day.start_time.substring(0, 5); // HH:MM
+
+                            const endInput = document.querySelector(`input[name="end_time[${dayIndex}]"]`);
+                            if(endInput) endInput.value = day.end_time.substring(0, 5); // HH:MM
+                        });
+                    } else {
+                        // Default fallback if no schedule exists (e.g. check Mon-Fri)
+                         for(let i=1; i<=5; i++) {
+                            const activeCheck = document.querySelector(`input[name="day_active[${i}]"]`);
+                            if(activeCheck) activeCheck.checked = true;
+                         }
+                    }
+                }
+                toggleModal('scheduleModal');
+            })
+            .catch(error => {
+                console.error('Error fetching schedule:', error);
+                alert('Could not load schedule. Please try again.');
+            });
     }
 </script>
 

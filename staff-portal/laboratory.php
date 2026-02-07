@@ -21,9 +21,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         $pdo->beginTransaction();
 
         if ($new_status === 'completed' && !empty($result)) {
-            // Update test status
-            $stmt = $pdo->prepare("UPDATE lab_tests SET status = ?, result = ?, completed_at = NOW() WHERE id = ?");
-            $stmt->execute([$new_status, $result, $test_id]);
+            $reportUrl = null;
+            $fileType = null;
+            $fileName = null;
+            $fileSize = null;
+
+            // Handle File Upload
+            if (isset($_FILES['result_file']) && $_FILES['result_file']['error'] !== UPLOAD_ERR_NO_FILE) {
+                require_once '../includes/LabResultHandler.php';
+                $labHandler = new LabResultHandler($pdo);
+                $uploadResult = $labHandler->uploadResultFile($test_id, $_FILES['result_file']);
+
+                if ($uploadResult['success']) {
+                    $reportUrl = $uploadResult['file_path'];
+                    $fileName = $uploadResult['file_name'];
+                    $fileType = $uploadResult['file_type'];
+                    $fileSize = $uploadResult['file_size'];
+                } else {
+                    throw new Exception($uploadResult['message']);
+                }
+            }
+
+            // Update test status and result details
+            $stmt = $pdo->prepare("UPDATE lab_tests SET status = ?, result = ?, report_url = ?, file_type = ?, file_name = ?, file_size = ?, completed_at = NOW() WHERE id = ?");
+            $stmt->execute([$new_status, $result, $reportUrl, $fileType, $fileName, $fileSize, $test_id]);
 
             // Auto-billing: Check if not already billed
             if (!isLabTestBilled($pdo, $test_id)) {
@@ -68,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         }
 
         $pdo->commit();
-    } catch (PDOException $e) {
+    } catch (Exception $e) {
         $pdo->rollBack();
         $error = "Error: " . $e->getMessage();
     }
@@ -237,7 +258,14 @@ include '../includes/sidebar_staff.php';
                                     <td><strong><?php echo h($t['test_no']); ?></strong></td>
                                     <td><?php echo h($t['patient_name']); ?></td>
                                     <td><?php echo h($t['test_name']); ?></td>
-                                    <td><?php echo h(substr($t['result'] ?? '', 0, 50)); ?><?php echo strlen($t['result'] ?? '') > 50 ? '...' : ''; ?>
+                                    <td>
+                                        <?php echo h(substr($t['result'] ?? '', 0, 50)); ?><?php echo strlen($t['result'] ?? '') > 50 ? '...' : ''; ?>
+                                        <?php if (!empty($t['report_url'])): ?>
+                                            <br>
+                                            <a href="../<?php echo h($t['report_url']); ?>" target="_blank" class="stat-link" style="color: #2563eb; font-weight: 500;">
+                                                📄 View Report (<?php echo h($t['file_type'] === 'application/pdf' ? 'PDF' : 'Image'); ?>)
+                                            </a>
+                                        <?php endif; ?>
                                     </td>
                                     <td><?php echo $t['completed_at'] ? date('d M Y H:i', strtotime($t['completed_at'])) : 'N/A'; ?>
                                     </td>
@@ -261,7 +289,7 @@ include '../includes/sidebar_staff.php';
                 <h3 class="card-title">Enter Test Result</h3>
                 <button class="btn btn-sm btn-outline" onclick="hideResultModal()">✕</button>
             </div>
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="update_status" value="1">
                 <input type="hidden" name="test_id" id="result_test_id">
                 <input type="hidden" name="new_status" value="completed">
@@ -273,6 +301,11 @@ include '../includes/sidebar_staff.php';
                     <label class="form-label">Result *</label>
                     <textarea name="result" class="form-textarea" rows="4" required
                         placeholder="Enter test results, values, observations..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Attach File (PDF, Image) - Optional</label>
+                    <input type="file" name="result_file" class="form-input" accept=".pdf,image/*">
+                    <p class="text-sm text-gray mt-1">Max size: 10MB</p>
                 </div>
                 <div class="flex gap-2">
                     <button type="button" class="btn btn-outline" onclick="hideResultModal()">Cancel</button>
