@@ -30,6 +30,8 @@
         <p class="nav-section">Analytics</p>
         <a href="reports.php" class="nav-item <?php echo ($current_page == 'reports') ? 'active' : ''; ?>">📊
             Reports</a>
+        <a href="archives.php" class="nav-item <?php echo ($current_page == 'archives') ? 'active' : ''; ?>">📦
+            Archives</a>
         <p class="nav-section">Account</p>
         <a href="profile.php" class="nav-item <?php echo ($current_page == 'profile') ? 'active' : ''; ?>">👤 My
             Profile</a>

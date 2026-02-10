@@ -107,11 +107,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_staff'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_staff'])) {
     $user_id = $_POST['user_id'];
     try {
-        // Soft delete - just deactivate
-        $stmt = $pdo->prepare("UPDATE users SET is_active = 0 WHERE id = ?");
-        $stmt->execute([$user_id]);
+        // Soft delete - deactivate user and mark profile as deleted
+        $pdo->beginTransaction();
+        $pdo->prepare("UPDATE users SET is_active = 0, deleted_at = NOW() WHERE id = ?")->execute([$user_id]);
+        $pdo->prepare("UPDATE staff_profiles SET deleted_at = NOW() WHERE user_id = ?")->execute([$user_id]);
+        $pdo->commit();
         $message = "Staff member deactivated successfully.";
     } catch (PDOException $e) {
+        $pdo->rollBack();
         $error = "Error: " . $e->getMessage();
     }
 }

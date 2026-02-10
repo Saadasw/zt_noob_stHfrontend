@@ -52,10 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_branch_admin']
     $user_id = $_POST['user_id'];
     try {
         $pdo->beginTransaction();
-        $pdo->prepare("DELETE FROM branch_admin_profiles WHERE user_id = ?")->execute([$user_id]);
-        $pdo->prepare("DELETE FROM users WHERE id = ?")->execute([$user_id]);
+        $pdo->prepare("UPDATE users SET is_active = 0, deleted_at = NOW() WHERE id = ?")->execute([$user_id]);
+        $pdo->prepare("UPDATE branch_admin_profiles SET deleted_at = NOW() WHERE user_id = ?")->execute([$user_id]);
         $pdo->commit();
-        $message = "Branch Admin deleted.";
+        $message = "Branch Admin deactivated.";
     } catch (PDOException $e) {
         $pdo->rollBack();
         $error = "Error: " . $e->getMessage();

@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_user'])) {
         $error = "Please fill in all required fields.";
     } else {
         // Check if email exists
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND deleted_at IS NULL");
         $stmt->execute([$email]);
         if ($stmt->fetch()) {
             $error = "Email already registered.";
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
         $error = "Name and Email are required.";
     } else {
         // Check if email exists for a different user
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND id != ? AND deleted_at IS NULL");
         $stmt->execute([$email, $id]);
         if ($stmt->fetch()) {
             $error = "Email already in use by another user.";
@@ -79,32 +79,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_user'])) {
     }
 }
 
-// Handle Delete User
+// Handle Deactivate User (Soft Delete)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_user'])) {
     $id = $_POST['user_id'];
-    // Prevent deleting self
+    // Prevent deactivating self
     if ($id == $_SESSION['user_id']) {
-        $error = "You cannot delete your own account.";
+        $error = "You cannot deactivate your own account.";
     } else {
         try {
-            $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE users SET is_active = 0, deleted_at = NOW() WHERE id = ?");
             $stmt->execute([$id]);
-            $message = "User deleted successfully.";
+            $message = "User deactivated successfully.";
         } catch (PDOException $e) {
-            $error = "Error deleting user: " . $e->getMessage();
+            $error = "Error deactivating user: " . $e->getMessage();
         }
+    }
+}
+
+// Handle Restore User
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_user'])) {
+    $id = $_POST['user_id'];
+    try {
+        $stmt = $pdo->prepare("UPDATE users SET is_active = 1, deleted_at = NULL WHERE id = ?");
+        $stmt->execute([$id]);
+        $message = "User restored successfully.";
+    } catch (PDOException $e) {
+        $error = "Error restoring user: " . $e->getMessage();
     }
 }
 
 // Fetch Users with Search
 $search = $_GET['search'] ?? '';
+$show_deactivated = isset($_GET['show_deactivated']) && $_GET['show_deactivated'] == 1;
+
 $sql = "SELECT * FROM users";
 $params = [];
+$conditions = [];
+
+// Filter by active/deactivated status
+if ($show_deactivated) {
+    $conditions[] = "deleted_at IS NOT NULL";
+} else {
+    $conditions[] = "deleted_at IS NULL";
+}
 
 if ($search) {
-    $sql .= " WHERE name LIKE ? OR email LIKE ? OR role LIKE ?";
+    $conditions[] = "(name LIKE ? OR email LIKE ? OR role LIKE ?)";
     $term = "%$search%";
     $params = [$term, $term, $term];
+}
+
+if (!empty($conditions)) {
+    $sql .= " WHERE " . implode(' AND ', $conditions);
 }
 
 $sql .= " ORDER BY created_at DESC";
@@ -124,9 +150,12 @@ include '../includes/sidebar_admin.php';
             <div>
                 <h1 class="page-title">User Management</h1>
                 <p class="page-subtitle">Manage all system users |
-                    <?php echo h($_SESSION['selected_branch_name'] ?? 'All Branches'); ?></p>
+                    <?php echo h($_SESSION['selected_branch_name'] ?? 'All Branches'); ?>
+                </p>
             </div>
-            <button class="btn btn-primary" onclick="toggleModal('addUserModal')">+ Add New User</button>
+            <?php if (!$show_deactivated): ?>
+                <button class="btn btn-primary" onclick="toggleModal('addUserModal')">+ Add New User</button>
+            <?php endif; ?>
         </div>
 
         <?php if ($message): ?>
@@ -141,9 +170,19 @@ include '../includes/sidebar_admin.php';
             <form method="GET" class="flex gap-2 mb-4">
                 <input type="text" name="search" class="form-input" placeholder="🔍 Search users..."
                     style="width: 200px;" value="<?php echo h($search); ?>">
+                <?php if ($show_deactivated): ?>
+                    <input type="hidden" name="show_deactivated" value="1">
+                <?php endif; ?>
                 <button type="submit" class="btn btn-sm btn-secondary">Search</button>
                 <?php if ($search): ?>
-                    <a href="users.php" class="btn btn-sm btn-outline">Clear</a>
+                    <a href="users.php<?php echo $show_deactivated ? '?show_deactivated=1' : ''; ?>"
+                        class="btn btn-sm btn-outline">Clear</a>
+                <?php endif; ?>
+                <?php if ($show_deactivated): ?>
+                    <a href="users.php" class="btn btn-sm btn-outline" style="margin-left: auto;">← View Active Users</a>
+                <?php else: ?>
+                    <a href="users.php?show_deactivated=1" class="btn btn-sm btn-outline"
+                        style="margin-left: auto; color: #dc2626; border-color: #dc2626;">View Deactivated</a>
                 <?php endif; ?>
             </form>
 
@@ -190,14 +229,24 @@ include '../includes/sidebar_admin.php';
                                             data-phone="<?php echo h($user['phone'] ?? ''); ?>"
                                             data-role="<?php echo h($user['role']); ?>"
                                             data-active="<?php echo $user['is_active']; ?>">Edit</button>
-                                        <form method="POST"
-                                            onsubmit="return confirm('Are you sure you want to delete this user?');"
-                                            style="display:inline;">
-                                            <input type="hidden" name="delete_user" value="1">
-                                            <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
-                                            <button type="submit" class="btn btn-sm btn-outline"
-                                                style="color: #dc2626; border-color: #dc2626;">Delete</button>
-                                        </form>
+                                        <?php if ($show_deactivated): ?>
+                                            <form method="POST" onsubmit="return confirm('Restore this user?');"
+                                                style="display:inline;">
+                                                <input type="hidden" name="restore_user" value="1">
+                                                <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline"
+                                                    style="color: #16a34a; border-color: #16a34a;">Restore</button>
+                                            </form>
+                                        <?php else: ?>
+                                            <form method="POST"
+                                                onsubmit="return confirm('Are you sure you want to deactivate this user?');"
+                                                style="display:inline;">
+                                                <input type="hidden" name="delete_user" value="1">
+                                                <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline"
+                                                    style="color: #dc2626; border-color: #dc2626;">Deactivate</button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>

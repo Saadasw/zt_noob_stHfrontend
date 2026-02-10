@@ -111,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Please enter a valid email address.";
     } else {
         // Check if email already exists
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ? AND deleted_at IS NULL");
         $stmt->execute([$email]);
         if ($stmt->fetch()) {
             $errors[] = "An account with this email already exists. Please login instead.";
@@ -460,12 +460,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="form-label">Gender <span class="required">*</span></label>
                         <select name="gender" class="form-select" required>
                             <option value="">Select Gender</option>
-                            <option value="Male" <?php echo (($_POST['gender'] ?? '') === 'Male') ? 'selected' : ''; ?>
-                                >Male</option>
-                            <option value="Female" <?php echo (($_POST['gender'] ?? '') === 'Female') ? 'selected' : ''; ?>
-                                >Female</option>
-                            <option value="Other" <?php echo (($_POST['gender'] ?? '') === 'Other') ? 'selected' : ''; ?>
-                                >Other</option>
+                            <option value="Male" <?php echo (($_POST['gender'] ?? '') === 'Male') ? 'selected' : ''; ?>>Male
+                            </option>
+                            <option value="Female" <?php echo (($_POST['gender'] ?? '') === 'Female') ? 'selected' : ''; ?>>
+                                Female</option>
+                            <option value="Other" <?php echo (($_POST['gender'] ?? '') === 'Other') ? 'selected' : ''; ?>>
+                                Other</option>
                         </select>
                     </div>
 

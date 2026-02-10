@@ -11,21 +11,22 @@ if (empty($type)) {
 }
 
 // Function to output CSV
-function outputCSV($filename, $data) {
+function outputCSV($filename, $data)
+{
     header('Content-Type: text/csv');
     header('Content-Disposition: attachment; filename="' . $filename . '.csv"');
-    
+
     $output = fopen('php://output', 'w');
-    
+
     // Add header row if data exists
     if (!empty($data)) {
         fputcsv($output, array_keys($data[0]));
     }
-    
+
     foreach ($data as $row) {
         fputcsv($output, $row);
     }
-    
+
     fclose($output);
     exit;
 }
@@ -42,7 +43,7 @@ switch ($type) {
         $data = $pdo->query("
             SELECT id, email, name, phone, role, is_active, created_at 
             FROM users 
-            WHERE role = 'patient'
+            WHERE role = 'patient' AND is_active = 1
             ORDER BY created_at DESC
         ")->fetchAll(PDO::FETCH_ASSOC);
         outputCSV('patient_list_' . date('Y-m-d'), $data);
