@@ -57,7 +57,7 @@ try {
 
         case 'laboratory':
             // Pending samples
-            $stmt = $pdo->query("SELECT COUNT(*) FROM lab_tests WHERE status = 'ordered'");
+            $stmt = $pdo->query("SELECT COUNT(*) FROM lab_tests WHERE status IN ('ordered', 'sample_pending')");
             $stat1 = $stmt->fetchColumn();
             // Samples collected
             $stmt = $pdo->query("SELECT COUNT(*) FROM lab_tests WHERE status = 'sample_collected'");
@@ -71,32 +71,32 @@ try {
             break;
 
         case 'pharmacy':
-            // Pending prescriptions
-            $stmt = $pdo->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'pending'");
+            // Pending prescriptions (active = not yet dispensed)
+            $stmt = $pdo->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'active'");
             $stat1 = $stmt->fetchColumn();
-            // Processing
-            $stmt = $pdo->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'processing'");
+            // Partially dispensed
+            $stmt = $pdo->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'partially_dispensed'");
             $stat2 = $stmt->fetchColumn();
-            // Ready for pickup
-            $stmt = $pdo->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'ready'");
+            // Fully dispensed total
+            $stmt = $pdo->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'fully_dispensed'");
             $stat3 = $stmt->fetchColumn();
             // Dispensed today
-            $stmt = $pdo->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'dispensed' AND DATE(updated_at) = '$today'");
+            $stmt = $pdo->query("SELECT COUNT(*) FROM prescriptions WHERE status = 'fully_dispensed' AND DATE(updated_at) = '$today'");
             $stat4 = $stmt->fetchColumn();
             break;
 
         case 'billing':
             // Pending bills
-            $stmt = $pdo->query("SELECT COUNT(*) FROM billings WHERE payment_status = 'pending'");
+            $stmt = $pdo->query("SELECT COUNT(*) FROM bills WHERE payment_status = 'pending'");
             $stat1 = $stmt->fetchColumn();
             // Partial payments
-            $stmt = $pdo->query("SELECT COUNT(*) FROM billings WHERE payment_status = 'partial'");
+            $stmt = $pdo->query("SELECT COUNT(*) FROM bills WHERE payment_status = 'partial'");
             $stat2 = $stmt->fetchColumn();
             // Today's collections
-            $stmt = $pdo->query("SELECT COALESCE(SUM(amount_paid), 0) FROM billings WHERE DATE(updated_at) = '$today'");
+            $stmt = $pdo->query("SELECT COALESCE(SUM(paid_amount), 0) FROM bills WHERE DATE(updated_at) = '$today'");
             $stat3 = $stmt->fetchColumn();
             // Completed today
-            $stmt = $pdo->query("SELECT COUNT(*) FROM billings WHERE payment_status = 'paid' AND DATE(updated_at) = '$today'");
+            $stmt = $pdo->query("SELECT COUNT(*) FROM bills WHERE payment_status = 'paid' AND DATE(updated_at) = '$today'");
             $stat4 = $stmt->fetchColumn();
             break;
     }
@@ -114,11 +114,14 @@ include '../includes/sidebar_staff.php';
     <main class="page-content">
         <div class="welcome-banner" style="border-left: 4px solid var(--<?php echo $dept_info['color']; ?>);">
             <h1 class="welcome-title"><?php echo $dept_info['icon']; ?> Welcome,
-                <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</h1>
+                <?php echo htmlspecialchars($_SESSION['user_name']); ?>!
+            </h1>
             <p class="welcome-subtitle"><?php echo h($dept_info['name']); ?> Department |
-                <?php echo h($staff_profile['branch_name'] ?? 'Branch'); ?></p>
+                <?php echo h($staff_profile['branch_name'] ?? 'Branch'); ?>
+            </p>
             <p class="welcome-meta">Employee ID: <?php echo h($staff_profile['employee_id'] ?? 'N/A'); ?> |
-                <?php echo date('l, d F Y'); ?></p>
+                <?php echo date('l, d F Y'); ?>
+            </p>
         </div>
 
         <div class="stats-grid">
@@ -174,18 +177,18 @@ include '../includes/sidebar_staff.php';
             <?php elseif ($department === 'pharmacy'): ?>
                 <div class="stat-card">
                     <div class="stat-icon yellow">📋</div>
-                    <div class="stat-label">Pending Prescriptions</div>
+                    <div class="stat-label">Active Prescriptions</div>
                     <div class="stat-value"><?php echo $stat1; ?></div>
                     <a href="pharmacy.php" class="stat-link">View →</a>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon blue">⚙️</div>
-                    <div class="stat-label">Processing</div>
+                    <div class="stat-label">Partially Dispensed</div>
                     <div class="stat-value"><?php echo $stat2; ?></div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon purple">📦</div>
-                    <div class="stat-label">Ready for Pickup</div>
+                    <div class="stat-label">Fully Dispensed</div>
                     <div class="stat-value"><?php echo $stat3; ?></div>
                     <a href="pharmacy.php" class="stat-link">Dispense →</a>
                 </div>
